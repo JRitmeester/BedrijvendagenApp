@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="logoHeight">150dp</dimen>
+    <dimen name="sideMargin">40dp</dimen>
+    <dimen name="fieldSpacing">20dp</dimen>
+    <dimen name="halfFieldSpacing">10dp</dimen>
+    <dimen name="loginButtonWidth">150dp</dimen>
+    <dimen name="recentScansHeight">150dp</dimen>
+    <dimen name="recentScansWidth">300dp</dimen>
+    <dimen name="checkmarkSize">220dp</dimen>
+    <dimen name="footerHeight">60dp</dimen>
+    <dimen name="buttonHeightFromBottom">120dp</dimen>
+    <dimen name="topFieldsMargin">8dp</dimen>
+    <dimen name="hintPadding">8dp</dimen>
+</resources>

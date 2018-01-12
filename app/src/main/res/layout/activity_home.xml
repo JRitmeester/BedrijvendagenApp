@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="nl.bedrijvendagen.bedrijvendagen.HomeActivity">
+
+    <RelativeLayout
+        android:id="@+id/rlWrapper"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBDLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/logoHeight"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:contentDescription="Bedrijvendagen Logo"
+            app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
+
+        <RelativeLayout
+            android:id="@+id/rlFields"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/ivBDLogo"
+            android:layout_marginLeft="@dimen/sideMargin"
+            android:layout_marginRight="@dimen/sideMargin"
+            android:layout_marginTop="30dp">
+
+            <TextView
+                android:id="@+id/tvRecently"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/fieldSpacing"
+                android:text="RECENTLY SCANNED"
+                android:textColor="@color/bdRed"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/bScan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/buttonHeightFromBottom"
+                android:backgroundTint="@color/bdRed"
+                android:text="SCAN QR-CODE"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvTotalScans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvRecently"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/halfFieldSpacing"
+                android:text="TOTAL SCANS: X"
+                android:textColor="@color/bdRed"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvRecent1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvTotalScans"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/halfFieldSpacing"
+                android:text="Student 1" />
+
+            <TextView
+                android:id="@+id/tvRecent2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tvRecent1"
+                android:layout_alignStart="@+id/tvRecent1"
+                android:layout_below="@+id/tvRecent1"
+                android:layout_marginBottom="@dimen/halfFieldSpacing"
+                android:text="Student 2" />
+
+            <TextView
+                android:id="@+id/tvRecent3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/tvRecent2"
+                android:layout_alignStart="@+id/tvRecent2"
+                android:layout_below="@+id/tvRecent2"
+                android:layout_marginBottom="@dimen/halfFieldSpacing"
+                android:text="Student 3" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvCompany"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/topFieldsMargin"
+            android:layout_marginLeft="@dimen/topFieldsMargin"
+            android:text="Company X"
+            android:textColor="@color/bdRed" />
+
+        <TextView
+            android:id="@+id/tvLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/topFieldsMargin"
+            android:layout_marginRight="@dimen/topFieldsMargin"
+            android:text="Log out"
+            android:textColor="@color/bdRed" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/ivFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rlWrapper"
+        android:adjustViewBounds="true"
+        android:contentDescription="Footer"
+        android:padding="0dp"
+        android:scaleType="fitEnd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/banner" />
+
+</android.support.constraint.ConstraintLayout>

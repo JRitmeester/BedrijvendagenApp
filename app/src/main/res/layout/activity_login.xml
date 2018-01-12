@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?><!--android.support.constraint.ConstraintLayout-->
+
+
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/ivFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:adjustViewBounds="true"
+        android:contentDescription="Footer"
+        android:padding="0dp"
+        android:scaleType="fitEnd"
+        app:srcCompat="@drawable/banner" />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="nl.bedrijvendagen.bedrijvendagen.LoginActivity"
+        android:layout_above="@id/ivFooter">
+
+        <RelativeLayout
+            android:id="@+id/rlSuper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+            <RelativeLayout
+                android:id="@+id/rlWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="@dimen/sideMargin">
+
+
+                <ImageView
+                    android:id="@+id/ivBDLogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/logoHeight"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="20dp"
+                    android:contentDescription="Bedrijvendagen Logo"
+                    app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
+
+                <TextView
+                    android:id="@+id/tvRecently"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ivBDLogo"
+                    android:layout_centerHorizontal="true"
+                    android:text="LOG IN HERE"
+                    android:textColor="@color/bdRed"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/tvRecently"
+                    android:layout_marginTop="@dimen/fieldSpacing"
+                    android:ems="10"
+                    android:hint="E-mail address"
+                    android:inputType="textEmailAddress"
+                    android:textColor="@android:color/background_dark"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/etEmail"
+                    android:layout_marginTop="@dimen/fieldSpacing"
+                    android:ems="10"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/bLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etPassword"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="21dp"
+                    android:backgroundTint="@color/bdRed"
+                    android:fitsSystemWindows="true"
+                    android:text="Login"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvLostPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/bLogin"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="13dp"
+                    android:text="Lost Password?"
+                    android:textColor="@color/bdRed" />
+
+                <!--<RelativeLayout-->
+                <!--android:id="@+id/rlFields"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentLeft="true"-->
+                <!--android:layout_alignParentStart="true"-->
+                <!--android:layout_below="@+id/ivBDLogo"-->
+                <!--android:layout_marginLeft="@dimen/sideMargin"-->
+                <!--android:layout_marginRight="@dimen/sideMargin"-->
+                <!--android:layout_marginTop="30dp">-->
+                <!--</RelativeLayout>-->
+            </RelativeLayout>
+
+            <!--</android.support.constraint.ConstraintLayout>-->
+
+        </RelativeLayout>
+
+    </ScrollView>
+</RelativeLayout>

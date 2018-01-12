@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="nl.bedrijvendagen.bedrijvendagen.ManualInputActivity">
+
+    <RelativeLayout
+        android:id="@+id/rlWrapper"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBDLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/logoHeight"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:contentDescription="Bedrijvendagen Logo"
+            app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
+
+        <RelativeLayout
+            android:id="@+id/rlFields"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/ivBDLogo"
+            android:layout_marginLeft="@dimen/sideMargin"
+            android:layout_marginRight="@dimen/sideMargin"
+            android:layout_marginTop="30dp">
+
+            <TextView
+                android:id="@+id/tvManualInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="MANUAL INPUT"
+                android:layout_marginBottom="@dimen/fieldSpacing"
+                android:textColor="@color/bdRed"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/etFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/tvManualInput"
+                android:layout_marginBottom="@dimen/fieldSpacing"
+                android:ems="10"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/etLastName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/etFirstName"
+                android:layout_marginBottom="@dimen/fieldSpacing"
+                android:ems="10"
+                android:textColor="@android:color/black"
+
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/bSaveEntry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/buttonHeightFromBottom"
+                android:backgroundTint="@color/bdRed"
+                android:text="SAVE ENTRY"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etLastName"
+                android:layout_centerHorizontal="true"
+                android:ems="10"
+                android:hint="E-mail address"
+                android:inputType="textEmailAddress"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/ivFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/rlWrapper"
+        android:adjustViewBounds="true"
+        android:contentDescription="Footer"
+        android:padding="0dp"
+        android:scaleType="fitEnd"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/banner" />
+
+</android.support.constraint.ConstraintLayout>

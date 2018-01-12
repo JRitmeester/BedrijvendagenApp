@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">BD3</string>
+    <string name="tvUsername">Username</string>
+    <string name="tvPassword">Password</string>
+    <string name="bLogim">Log in</string>
+    <string name="tvPreviousScans">Previous scans</string>
+    <string name="tvCompanyName" />
+    <string name="tvManualInput">Manual input</string>
+    <string name="tvFirstName">First name</string>
+    <string name="bSubmit">Submit</string>
+    <string name="tvFooterBD">Bedrijvendagen Twente</string>
+    <string name="secondErrorMessage">Unfortunately we were unable to upload your data to the server. We are going to save your data locally and upload it at a later time.\\n\\nPlease also take a note yourself with old fashioned pen and paper, to make sure you definitely have this record saved!\\n\\nSorry for the inconvenience!\\n\\nNote; if this error occurs often, please notify the board of the Bedrijvendagen.</string>
+    <string name="Footer">Bedrijvendagen Twente</string>
+    <string name="second_error_message">Unfortunately we were unable to upload your data to the server. We are going to save your data locally and upload it at a later time.\\n\\nPlease also take a note yourself with old fashioned pen and paper, to make sure you definitely have this record saved!\\n\\nSorry for the inconvenience!\\n\\nNote; if this error occurs often, please notify the board of the Bedrijvendagen.</string>
+</resources>
