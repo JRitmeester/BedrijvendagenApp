@@ -35,6 +35,8 @@ public class ManualInputActivity extends AppCompatActivity {
             tvFirstName.setVisibility(View.GONE);
             tvLastName.setVisibility(View.GONE);
         } else {
+            tvFirstName.setVisibility(View.VISIBLE);
+            tvLastName.setVisibility(View.VISIBLE);
             tvFirstName.setText(firstName);
             tvLastName.setText(lastName);
         }

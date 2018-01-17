@@ -11,4 +11,13 @@ public class CompanyCredentials {
     public static String company = "";
     public static String email = "";
     public static String password = "";
+
+    public static void reset() {
+        auth = false;
+        company_id = -1;
+        token = "default";
+        company = "default";
+        email = "default";
+        password = "default";
+    }
 }

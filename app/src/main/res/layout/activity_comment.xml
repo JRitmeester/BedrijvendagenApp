@@ -26,6 +26,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <View
+            android:id="@+id/filler"
+            android:layout_width="0dp"
+            android:layout_height="35dp" />
+
         <ImageView
             android:id="@+id/ivBDLogo"
             android:layout_width="wrap_content"
@@ -34,6 +39,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="20dp"
+            android:layout_below="@id/filler"
             android:contentDescription="Bedrijvendagen Logo"
             app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
 
@@ -46,7 +52,7 @@
             android:layout_below="@+id/ivBDLogo"
             android:layout_marginLeft="@dimen/sideMargin"
             android:layout_marginRight="@dimen/sideMargin"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="@dimen/fieldSpacing">
 
             <TextView
                 android:id="@+id/tvScannedName"
@@ -54,7 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/fieldSpacing"
                 android:text="NAME"
                 android:textColor="@color/bdRed"
                 android:textSize="24sp"
@@ -67,6 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvScannedName"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/fieldSpacing"
                 android:background="@drawable/shape"
                 android:ems="10"
                 android:gravity="start"
@@ -86,9 +92,9 @@
                 android:id="@+id/bSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/buttonHeightFromBottom"
+                android:layout_below="@id/etCommentField"
+                android:layout_marginTop="@dimen/fieldSpacing"
                 android:backgroundTint="@color/bdRed"
                 android:text="SAVE"
                 android:textColor="@color/white"

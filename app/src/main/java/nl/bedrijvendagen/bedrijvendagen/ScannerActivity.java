@@ -26,7 +26,6 @@ import java.io.IOException;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
-import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.study;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
 
 public class ScannerActivity extends AppCompatActivity {
@@ -39,6 +38,7 @@ public class ScannerActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private boolean scanned = false;
     private int width, height;
+    private Toast toast;
 
     @Override
 
@@ -58,7 +58,7 @@ public class ScannerActivity extends AppCompatActivity {
                 .Builder(this, barcodeDetector)
                 .setAutoFocusEnabled(true)
 //                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
-                // TODO: Check if setRequestedPreviewSize(w, h); is needed.
+                // TODO: setRequestedPreviewSize(w,h) implementeren.
                 .build();
 
         svCamera.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -116,11 +116,10 @@ public class ScannerActivity extends AppCompatActivity {
                         hasEmail = qrResult[2].equals("Y");
                         firstName = qrResult[3];
                         lastName = qrResult[4];
-                        study = qrResult[5];
 
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                Toast.makeText(ScannerActivity.this, userID + "," + hasEmail + "," + firstName + "," + lastName + "," + study, Toast.LENGTH_SHORT).show();
+                                makeToast(userID + "," + hasEmail + "," + firstName + "," + lastName, Toast.LENGTH_SHORT);
                             }
                         });
 
@@ -147,6 +146,14 @@ public class ScannerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void makeToast(String message, int duration) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(ScannerActivity.this, message, duration);
+        toast.show();
     }
 
     private void requestPermission() {

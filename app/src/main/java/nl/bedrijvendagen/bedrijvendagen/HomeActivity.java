@@ -1,5 +1,6 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -10,16 +11,27 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
+import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private String countUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups";
-    private String namesUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups"; // "http://requestbin.fullcontact.com/1j4b8jh1";
+    private String countUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups/count";
+    private String namesUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups";
+    private String deleteURL = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session";
+    private RequestQueue queue;
 
     private TextView tvLogout;
     private TextView tvCompany;
@@ -35,9 +47,12 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         initViews();
         initListeners();
         setFont();
+
+        queue = Volley.newRequestQueue(this);
     }
 
     @Override
@@ -45,20 +60,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         // Pull the last three scanned visitors and set company name in top left.
         // Also gets called when the activity is first launched.
-        Thread nameThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (RequestHandler.checkToken()) {
-                        updateNames();
-                        updateCount();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        nameThread.start();
+        updateNames();
+        updateCount();
     }
 
     private void initViews() {
@@ -79,21 +82,7 @@ public class HomeActivity extends AppCompatActivity {
         tvLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                Toast.makeText(HomeActivity.this, "Logged out successfully.", Toast.LENGTH_SHORT).show();
-                Thread logoutThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (RequestHandler.checkToken()) {
-                                logout();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                logoutThread.start();
+                logout();
             }
         });
 
@@ -111,7 +100,6 @@ public class HomeActivity extends AppCompatActivity {
         setTypeface(this, tvCompany);
         setTypeface(this, tvRecently);
         setTypeface(this, tvTotal);
-        // TODO: Set the scanned amount.
         setTypeface(this, bScanQR);
         setTypeface(this, tvRecent1);
         setTypeface(this, tvRecent2);
@@ -121,95 +109,134 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void logout() {
-        Intent loginIntent = new Intent(this, LoginActivity.class);
-        startActivity(loginIntent);
-        finish();
-//        if (RequestHandler.delete("https://www.bedrijvendagentwente.nl/auth/api/accounts/session") == 200) {
-//            String response = RequestHandler.response;
-//            try {
-//                JSONObject jObj = new JSONObject(response);
-//                auth = Boolean.valueOf(jObj.getString("auth"));
-//                CompanyCredentials.token = jObj.getString("_csrf");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            Log.d("LOGOUT", "auth: " + auth + ", token: " + CompanyCredentials.token);
-//            Intent loginIntent = new Intent(HomeActivity.this, LoginActivity.class);
-//            startActivity(loginIntent);
-//            finish();
-//        } else {
-//            runOnUiThread(new Runnable() {
-//                public void run() {
-//                    Toast.makeText(HomeActivity.this, "Couldn't log out.", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//
-//        }
-    }
-
-    private void updateNames() {
-        Log.d("NAMES", "Trying to refresh names...");
-        try {
-            HttpGetRequest task = new HttpGetRequest();
-            String response = "";
-            try {
-                response = task.execute(namesUrl).get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            if (task.responseCode == 200) {
+        StringRequest logoutRequest = new StringRequest(Request.Method.DELETE, deleteURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("LOGOUT", response);
                 JSONObject jObj;
                 try {
                     jObj = new JSONObject(response);
-                    JSONArray lastThreeScans = jObj.getJSONArray(""); //TODO: Verify this name.
-                    tvRecent1.setText(lastThreeScans.getJSONObject(0).getString("name"));
-                    tvRecent2.setText(lastThreeScans.getJSONObject(1).getString("name"));
-                    tvRecent3.setText(lastThreeScans.getJSONObject(2).getString("name"));
-                    Log.d("FETCH NAMES", tvRecent1.getText().toString() + ", " + tvRecent2.getText().toString() + ", " + tvRecent3.getText().toString());
-                } catch (JSONException e) {
+                    auth = Boolean.valueOf(jObj.getString("auth"));
+                    if (!auth) {
+                        CompanyCredentials.reset();
+                        // Finish all activities and return to the login screen.
+                        // This makes it not possible to use the "back" button to go from the login screen to the home (or any other) screen.
+                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                        ComponentName cn = intent.getComponent();
+                        Intent mainIntent = Intent.makeRestartActivityTask(cn);
+                        startActivity(mainIntent);
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
-                } catch (NullPointerException e) {
-                    Log.e("FETCH NAMES", "No response.");
+                    Log.e("ERROR", e.getMessage());
                 }
             }
-        } catch (Exception e2) {
-            e2.printStackTrace();
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(HomeActivity.this, "Couldn't refresh names.", Toast.LENGTH_SHORT).show();
-                }
-            });
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+            }
+        }) {
+            @Override
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+//                headers.put("Content-Type", "application/json");
+                headers.put("X-Requested-With", "XmlHttpRequest");
+                headers.put("X-Csrf-Token", CompanyCredentials.token);
+                return headers;
+            }
 
-        }
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        queue.add(logoutRequest);
+    }
+
+    private void updateNames() {
+        StringRequest nameRequest = new StringRequest(Request.Method.GET, namesUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("NAMES", response);
+                JSONArray jArr;
+                try {
+                    jArr = new JSONArray(response);
+
+                    String[] names = new String[3];
+                    for (int i = 0; i < names.length; i++) {
+                        names[i] = jArr.getJSONObject(i).getString(("name"));
+                    }
+                    Log.d("NAMES (PARSED)", names[0] + ", " + names[1] + ", " + names[2]);
+                    tvRecent1.setText(names[0]);
+                    tvRecent2.setText(names[1]);
+                    tvRecent3.setText(names[2]);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("error", e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+            }
+        }) {
+            @Override
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+//                headers.put("Content-Type", "application/json");
+                headers.put("X-Requested-With", "XmlHttpRequest");
+                headers.put("X-Csrf-Token", CompanyCredentials.token);
+                return headers;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        queue.add(nameRequest);
 
     }
 
     private void updateCount() {
-        Log.d("COUNT", "Trying to update count...");
-        HttpGetRequest task = new HttpGetRequest();
-        String response = "";
-        try {
-            response = task.execute(countUrl).get();
-            // https://stackoverflow.com/questions/17136769/how-to-parse-jsonarray-in-android
-            JSONObject jObj = null;
-            try {
-                jObj = new JSONObject(response);
-                tvRecently.setText(jObj.getString("count"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e) {
-                Log.e("FETCH COUNT", "No response.");
+        StringRequest countRequest = new StringRequest(Request.Method.GET, countUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("COUNT", response);
+                JSONObject jObj;
+                try {
+                    jObj = new JSONObject(response);
+                    String countTitle = "Total scanned: ";
+                    countTitle += jObj.getString("count");
+                    tvTotal.setText(countTitle);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("error", e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+            }
+        }) {
+            @Override
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+//                headers.put("Content-Type", "application/json");
+                headers.put("X-Requested-With", "XmlHttpRequest");
+                headers.put("X-Csrf-Token", CompanyCredentials.token);
+                return headers;
             }
 
-        } catch (Exception e2) {
-            e2.printStackTrace();
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    Toast.makeText(HomeActivity.this, "Couldn't refresh count.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        queue.add(countRequest);
 
-        }
     }
 }
