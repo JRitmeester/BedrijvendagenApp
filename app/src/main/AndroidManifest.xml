@@ -14,7 +14,7 @@
         android:required="false" />
     <uses-feature
         android:name="android.permission.INTERNET"
-        android:required="true" />
+        android:required="false" />
 
     <application
         android:allowBackup="true"

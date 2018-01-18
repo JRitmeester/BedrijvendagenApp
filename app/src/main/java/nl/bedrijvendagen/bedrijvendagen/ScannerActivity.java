@@ -3,6 +3,7 @@ package nl.bedrijvendagen.bedrijvendagen;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -57,7 +58,7 @@ public class ScannerActivity extends AppCompatActivity {
         cameraSource = new CameraSource
                 .Builder(this, barcodeDetector)
                 .setAutoFocusEnabled(true)
-//                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
+                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
                 // TODO: setRequestedPreviewSize(w,h) implementeren.
                 .build();
 
@@ -96,13 +97,14 @@ public class ScannerActivity extends AppCompatActivity {
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override
             public void release() {
-
+                scanned = true;
             }
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0 && !scanned) {
+                    scanned = true;
                     String[] qrResult = barcodes.valueAt(0).rawValue.split(";");
 //                    // Format:
 //                    // 0:   "bd"
@@ -111,7 +113,7 @@ public class ScannerActivity extends AppCompatActivity {
 //                    // 3:   first name
 //                    // 4:   last name
                     if (qrResult[0].contentEquals("bd")) {
-                        scanned = true;
+//                        scanned = true;
                         userID = Integer.parseInt(qrResult[1]);
                         hasEmail = qrResult[2].equals("Y");
                         firstName = qrResult[3];
@@ -119,24 +121,23 @@ public class ScannerActivity extends AppCompatActivity {
 
                         runOnUiThread(new Runnable() {
                             public void run() {
-                                makeToast(userID + "," + hasEmail + "," + firstName + "," + lastName, Toast.LENGTH_SHORT);
+                                makeToast(userID + "," + hasEmail + "," + firstName + "," + lastName, Toast.LENGTH_LONG);
                             }
                         });
 
                         if (!hasEmail) {
                             Intent manualInputIntent = new Intent(ScannerActivity.this, ManualInputActivity.class);
                             startActivity(manualInputIntent);
-                            scanned = false;
-                            finish();
+//                            scanned = false;
                         } else {
                             Intent commentIntent = new Intent(ScannerActivity.this, CommentActivity.class);
                             startActivity(commentIntent);
-                            scanned = false;
-                            finish();
+//                            scanned = false;
                         }
+                        finish();
                     } else {
                         Toast.makeText(ScannerActivity.this, "The QR code is not part of the Bedrijvendagen event.", Toast.LENGTH_SHORT).show();
-                        finish();
+                        scanned = false;
                     }
                     for (String s : qrResult) {
                         Log.d("QR RESULT:", s);

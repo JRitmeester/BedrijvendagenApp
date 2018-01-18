@@ -61,6 +61,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:text="NAME"
+                android:textAlignment="center"
                 android:textColor="@color/bdRed"
                 android:textSize="24sp"
                 android:textStyle="bold" />

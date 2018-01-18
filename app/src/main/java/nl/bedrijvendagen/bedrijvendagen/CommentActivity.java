@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.comment;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -62,6 +64,10 @@ public class CommentActivity extends AppCompatActivity {
         tvScannedName = findViewById(R.id.tvScannedName);
         etCommentField = findViewById(R.id.etCommentField);
         bSave = findViewById(R.id.bSave);
+
+        if (!firstName.equals("default") && !lastName.equals("default")) {
+            tvScannedName.setText(firstName + " " + lastName);
+        }
     }
 
     private void initListeners() {
