@@ -41,6 +41,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                 resetTimer();
                 Intent homeIntent = new Intent(ConfirmationActivity.this, HomeActivity.class);
                 startActivity(homeIntent);
+                StudentCredentials.reset();
                 finish();
             }
         }.start();

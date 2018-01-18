@@ -79,6 +79,7 @@ public class CommentActivity extends AppCompatActivity {
                 comment = etCommentField.getText().toString();
                 Intent loadIntent = new Intent(CommentActivity.this, LoadActivity.class);
                 startActivity(loadIntent);
+                finish();
             }
         });
     }

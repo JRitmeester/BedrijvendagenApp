@@ -1,6 +1,9 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,6 +36,7 @@ public class LoadActivity extends AppCompatActivity {
 
     private ImageView loadImage;
     private Animation rotation;
+    private int timeoutLength = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,7 @@ public class LoadActivity extends AppCompatActivity {
                     Log.e("error", e.getMessage());
                 }
                 try {
+                    if (!isNetworkAvailable()) throw new Exception();
                     // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
                     if (response.contains("created")) {
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
@@ -79,12 +85,16 @@ public class LoadActivity extends AppCompatActivity {
                     Intent errorIntent = new Intent(LoadActivity.this, ErrorActivity.class);
                     startActivity(errorIntent);
                     e.printStackTrace();
+                    finish();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(LoadActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                Intent errorIntent = new Intent(LoadActivity.this, ErrorActivity.class);
+                startActivity(errorIntent);
+                finish();
             }
         }) {
             @Override
@@ -113,6 +123,14 @@ public class LoadActivity extends AppCompatActivity {
                 return "application/json";
             }
         };
+        submitRequest.setRetryPolicy(new DefaultRetryPolicy(timeoutLength, 0,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(submitRequest);
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

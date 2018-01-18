@@ -45,6 +45,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/fieldSpacing"
                 android:text="RECENTLY SCANNED"
+                android:textAlignment="center"
                 android:textColor="@color/bdRed"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -53,11 +54,12 @@
                 android:id="@+id/bScan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/tvRecent3"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/fieldSpacing"
                 android:backgroundTint="@color/bdRed"
                 android:text="SCAN QR-CODE"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
@@ -69,6 +71,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/halfFieldSpacing"
                 android:text="TOTAL SCANS: X"
+                android:textAlignment="center"
                 android:textColor="@color/bdRed"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -79,28 +82,28 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvTotalScans"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/halfFieldSpacing"
-                android:text="Student 1" />
+                android:text="Student 1"
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/tvRecent2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/tvRecent1"
-                android:layout_alignStart="@+id/tvRecent1"
                 android:layout_below="@+id/tvRecent1"
-                android:layout_marginBottom="@dimen/halfFieldSpacing"
-                android:text="Student 2" />
+                android:layout_marginTop="@dimen/fieldSpacing"
+                android:layout_centerHorizontal="true"
+                android:text="Student 2"
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/tvRecent3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/tvRecent2"
-                android:layout_alignStart="@+id/tvRecent2"
                 android:layout_below="@+id/tvRecent2"
-                android:layout_marginBottom="@dimen/halfFieldSpacing"
-                android:text="Student 3" />
+                android:layout_marginTop="@dimen/fieldSpacing"
+                android:layout_centerHorizontal="true"
+                android:text="Student 3"
+                android:textAlignment="center" />
 
         </RelativeLayout>
 
@@ -111,9 +114,10 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="@dimen/topFieldsMargin"
             android:layout_marginLeft="@dimen/topFieldsMargin"
+            android:layout_marginTop="@dimen/topFieldsMargin"
             android:text="Company X"
+            android:textAlignment="viewStart"
             android:textColor="@color/bdRed" />
 
         <TextView
@@ -123,9 +127,10 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="@dimen/topFieldsMargin"
             android:layout_marginRight="@dimen/topFieldsMargin"
+            android:layout_marginTop="@dimen/topFieldsMargin"
             android:text="Log out"
+            android:textAlignment="textEnd"
             android:textColor="@color/bdRed" />
     </RelativeLayout>
 

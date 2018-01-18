@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -51,6 +52,11 @@ public class ScannerActivity extends AppCompatActivity {
 
         requestPermission();
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
@@ -58,7 +64,7 @@ public class ScannerActivity extends AppCompatActivity {
         cameraSource = new CameraSource
                 .Builder(this, barcodeDetector)
                 .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
+                .setRequestedPreviewSize(width, height)
                 // TODO: setRequestedPreviewSize(w,h) implementeren.
                 .build();
 
@@ -116,14 +122,11 @@ public class ScannerActivity extends AppCompatActivity {
 //                        scanned = true;
                         userID = Integer.parseInt(qrResult[1]);
                         hasEmail = qrResult[2].equals("Y");
+                        Log.d("MAIL", String.valueOf(hasEmail));
                         firstName = qrResult[3];
                         lastName = qrResult[4];
 
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                makeToast(userID + "," + hasEmail + "," + firstName + "," + lastName, Toast.LENGTH_LONG);
-                            }
-                        });
+                        makeToast(userID + "," + hasEmail + "," + firstName + "," + lastName, Toast.LENGTH_LONG);
 
                         if (!hasEmail) {
                             Intent manualInputIntent = new Intent(ScannerActivity.this, ManualInputActivity.class);
@@ -132,11 +135,11 @@ public class ScannerActivity extends AppCompatActivity {
                         } else {
                             Intent commentIntent = new Intent(ScannerActivity.this, CommentActivity.class);
                             startActivity(commentIntent);
-//                            scanned = false;
+//                            scanned test= false;
                         }
                         finish();
                     } else {
-                        Toast.makeText(ScannerActivity.this, "The QR code is not part of the Bedrijvendagen event.", Toast.LENGTH_SHORT).show();
+                        makeToast("The QR code is not part of the Bedrijvendagen event.", Toast.LENGTH_LONG);
                         scanned = false;
                     }
                     for (String s : qrResult) {
@@ -149,12 +152,18 @@ public class ScannerActivity extends AppCompatActivity {
         });
     }
 
-    private void makeToast(String message, int duration) {
-        if (toast != null) {
-            toast.cancel();
-        }
-        toast = Toast.makeText(ScannerActivity.this, message, duration);
-        toast.show();
+    private void makeToast(final String message, final int duration) {
+        Log.d("TOAST", message);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (toast != null) {
+                    toast.cancel();
+                }
+                toast = Toast.makeText(ScannerActivity.this, message, duration);
+                toast.show();
+            }
+        });
     }
 
     private void requestPermission() {
