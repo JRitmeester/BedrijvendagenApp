@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
 
 public class LoadActivity extends AppCompatActivity {
@@ -59,26 +61,25 @@ public class LoadActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.d("LOGIN", response);
                 JSONObject jObj = null;
+                boolean valid;
                 try {
                     jObj = new JSONObject(response);
+                    valid = Boolean.valueOf(jObj.getString("valid"));
+                    if (!valid) throw new Exception();
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e("error", e.getMessage());
+                    error(e);
                 }
                 try {
                     // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
                     if (response.contains("created")) {
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
                         startActivity(confirmIntent);
+                        finish();
                     } else {
-                        Intent errorIntent = new Intent(LoadActivity.this, ErrorActivity.class);
-                        startActivity(errorIntent);
+                        error();
                     }
-                    finish();
                 } catch (Exception e) {
-                    Intent errorIntent = new Intent(LoadActivity.this, ErrorActivity.class);
-                    startActivity(errorIntent);
-                    e.printStackTrace();
+                    error(e);
                 }
             }
         }, new Response.ErrorListener() {
@@ -105,6 +106,7 @@ public class LoadActivity extends AppCompatActivity {
                     params.put("account_id", StudentCredentials.userID);
                 }
                 params.put("comment", StudentCredentials.comment);
+                params.put("name", firstName + " " + lastName);
                 return new JSONObject(params).toString().getBytes();
             }
 
@@ -114,5 +116,14 @@ public class LoadActivity extends AppCompatActivity {
             }
         };
         queue.add(submitRequest);
+    }
+
+    private void error(Exception... e) {
+        Intent errorIntent = new Intent(this, ErrorActivity.class);
+        startActivity(errorIntent);
+        if (e.length > 0) {
+            Log.e("LOAD", e[0].getMessage());
+        }
+        finish();
     }
 }

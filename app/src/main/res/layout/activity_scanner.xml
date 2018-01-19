@@ -20,6 +20,9 @@
             android:id="@+id/svCamera"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/bManualInput"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="37dp"
             android:visibility="visible" />
 
         <ImageView

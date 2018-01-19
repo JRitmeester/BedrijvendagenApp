@@ -55,12 +55,6 @@ public class ScannerActivity extends AppCompatActivity {
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
 
-        cameraSource = new CameraSource
-                .Builder(this, barcodeDetector)
-                .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
-                // TODO: setRequestedPreviewSize(w,h) implementeren.
-                .build();
 
         svCamera.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -93,6 +87,15 @@ public class ScannerActivity extends AppCompatActivity {
                 cameraSource.stop();
             }
         });
+
+        Log.d("SCANNER", "" + (Resources.getSystem().getDisplayMetrics().widthPixels) + ", " + Resources.getSystem().getDisplayMetrics().heightPixels);
+
+        cameraSource = new CameraSource
+                .Builder(this, barcodeDetector)
+                .setAutoFocusEnabled(true)
+                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
+//                .setRequestedPreviewSize(svCamera.getMeasuredWidth(), svCamera.getMeasuredHeight())
+                .build();
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
             @Override

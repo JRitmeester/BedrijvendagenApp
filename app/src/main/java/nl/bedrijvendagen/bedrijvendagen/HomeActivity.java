@@ -166,6 +166,7 @@ public class HomeActivity extends AppCompatActivity {
                     String[] names = new String[3];
                     for (int i = 0; i < names.length; i++) {
                         names[i] = jArr.getJSONObject(i).getString(("name"));
+                        names[i] = (names[i] == "null") ? "Manual entry" : names[i];
                     }
                     Log.d("NAMES (PARSED)", names[0] + ", " + names[1] + ", " + names[2]);
                     tvRecent1.setText(names[0]);
