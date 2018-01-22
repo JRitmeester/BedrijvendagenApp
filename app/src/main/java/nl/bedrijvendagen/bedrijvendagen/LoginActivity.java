@@ -158,14 +158,12 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("LOGIN", e.getMessage());
                         e.printStackTrace();
                     }
-                } else {
-                    Toast.makeText(LoginActivity.this, "Invalid login", Toast.LENGTH_SHORT);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                Toast.makeText(LoginActivity.this, "Invalid login", Toast.LENGTH_LONG).show();
             }
         }) {
             @Override

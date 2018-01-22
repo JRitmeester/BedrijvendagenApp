@@ -20,6 +20,8 @@ public class SecondErrorActivity extends AppCompatActivity {
         initViews();
         initListeners();
         setFont();
+
+        StudentCredentials.reset();
     }
 
     private void initViews() {
