@@ -2,6 +2,7 @@ package nl.bedrijvendagen.bedrijvendagen;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -9,8 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Size;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,6 +25,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.util.List;
 
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
@@ -52,19 +54,14 @@ public class ScannerActivity extends AppCompatActivity {
 
         requestPermission();
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int width = displayMetrics.widthPixels;
-        int height = displayMetrics.heightPixels;
-
         barcodeDetector = new BarcodeDetector.Builder(this)
                 .setBarcodeFormats(Barcode.QR_CODE)
                 .build();
 
-        cameraSource = new CameraSource
-                .Builder(this, barcodeDetector)
+
+        cameraSource = new CameraSource.Builder(this, barcodeDetector)
+                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
                 .setAutoFocusEnabled(true)
-                .setRequestedPreviewSize(width, height)
                 // TODO: setRequestedPreviewSize(w,h) implementeren.
                 .build();
 
@@ -226,5 +223,54 @@ public class ScannerActivity extends AppCompatActivity {
                 startActivity(manualInputIntent);
             }
         });
+    }
+
+    private Size getOptimalSize(List<Size> sizes, int w, int h) {
+
+        final double ASPECT_TOLERANCE = 0.2;
+        double targetRatio = (double) w / h;
+        if (sizes == null)
+            return null;
+        Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+        int targetHeight = h;
+        // Try to find an size match aspect ratio and size
+        for (Size size : sizes) {
+//          Log.d("CameraActivity", "Checking size " + size.width + "w " + size.height + "h");
+            double ratio = (double) size.getWidth() / size.getHeight();
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
+                continue;
+            if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.getHeight() - targetHeight);
+            }
+        }
+        // Cannot find the one match the aspect ratio, ignore the requirement
+
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Size size : sizes) {
+                if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.getHeight() - targetHeight);
+                }
+            }
+        }
+
+        SharedPreferences previewSizePref;
+//        if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
+        previewSizePref = getSharedPreferences("PREVIEW_PREF", MODE_PRIVATE);
+//        } else {
+//            previewSizePref = getSharedPreferences("FRONT_PREVIEW_PREF",MODE_PRIVATE);
+//        }
+
+        SharedPreferences.Editor prefEditor = previewSizePref.edit();
+        prefEditor.putInt("width", optimalSize.getWidth());
+        prefEditor.putInt("height", optimalSize.getHeight());
+
+        prefEditor.commit();
+
+//      Log.d("CameraActivity", "Using size: " + optimalSize.width + "w " + optimalSize.height + "h");
+        return optimalSize;
     }
 }

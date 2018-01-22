@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Bedrijvendagen.iml" filepath="$PROJECT_DIR$/Bedrijvendagen.iml" />
       <module fileurl="file://D:\Documents\GitHub\BedrijvendagenApp\Bedrijvendagen.iml" filepath="D:\Documents\GitHub\BedrijvendagenApp\Bedrijvendagen.iml" />
-      <module fileurl="file://$PROJECT_DIR$/BedrijvendagenApp.iml" filepath="$PROJECT_DIR$/BedrijvendagenApp.iml" />
+      <module fileurl="file://C:\Users\Jeroen\Documenten\Bedrijvendagen\BedrijvendagenApp.iml" filepath="C:\Users\Jeroen\Documenten\Bedrijvendagen\BedrijvendagenApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

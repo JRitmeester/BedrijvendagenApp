@@ -67,11 +67,13 @@ public class LoadActivity extends AppCompatActivity {
                     valid = Boolean.valueOf(jObj.getString("valid"));
                     if (!valid) throw new Exception();
                 } catch (Exception e) {
-                    error(e);
+                    e.printStackTrace();
+                    error();
                 }
                 try {
                     // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
                     if (response.contains("created")) {
+                        StudentCredentials.reset();
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
                         startActivity(confirmIntent);
                         finish();
@@ -79,7 +81,8 @@ public class LoadActivity extends AppCompatActivity {
                         error();
                     }
                 } catch (Exception e) {
-                    error(e);
+                    e.printStackTrace();
+                    error();
                 }
             }
         }, new Response.ErrorListener() {
@@ -118,12 +121,9 @@ public class LoadActivity extends AppCompatActivity {
         queue.add(submitRequest);
     }
 
-    private void error(Exception... e) {
+    private void error() {
         Intent errorIntent = new Intent(this, ErrorActivity.class);
         startActivity(errorIntent);
-        if (e.length > 0) {
-            Log.e("LOAD", e[0].getMessage());
-        }
         finish();
     }
 }

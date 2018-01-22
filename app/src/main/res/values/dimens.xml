@@ -3,6 +3,7 @@
     <dimen name="logoHeight">150dp</dimen>
     <dimen name="sideMargin">40dp</dimen>
     <dimen name="fieldSpacing">20dp</dimen>
+    <dimen name="recentNameSpacing">10dp</dimen>
     <dimen name="halfFieldSpacing">10dp</dimen>
     <dimen name="loginButtonWidth">150dp</dimen>
     <dimen name="recentScansHeight">150dp</dimen>

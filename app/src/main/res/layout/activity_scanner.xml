@@ -19,17 +19,15 @@
         <SurfaceView
             android:id="@+id/svCamera"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/bManualInput"
+            android:layout_height="500dp"
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="37dp"
+            android:layout_centerVertical="true"
             android:visibility="visible" />
 
         <ImageView
             android:id="@+id/ivOverlay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="false"
             android:contentDescription="Scan overlay"
             android:cropToPadding="false"
             android:scaleType="centerCrop"

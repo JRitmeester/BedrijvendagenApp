@@ -204,16 +204,41 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            View v = getCurrentFocus();
-            if (v instanceof EditText) {
-                Rect outRect = new Rect();
-                v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            View[] exceptions = {etEmail, etPassword, bLogin};
+            Rect[] exceptionRects = new Rect[exceptions.length];
+            for (int i = 0; i < exceptions.length; i++) {
+                exceptionRects[i] = new Rect();
+                exceptions[i].getGlobalVisibleRect(exceptionRects[i]);
+            }
+//            boolean exceptionWasPressed = false;
+//            for (int i = 0; i < exceptions.length; i++) {
+//                Rect outRect2 = new Rect();
+//                exceptions[i].getGlobalVisibleRect(outRect2);
+//                if (outRect2.contains((int)event.getRawX(), (int) event.getRawY())) {
+//                    exceptionWasPressed = true;
+//                    break;
+//                }
+//            }
+//
+            View currentView = getCurrentFocus();
+            boolean exceptionFound = false;
+//            if (currentView instanceof EditText) {
+            for (Rect e : exceptionRects) {
+                if (e.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    exceptionFound = true;
+                    break;
+                }
+                }
+            if (!exceptionFound) {
+                if (currentView != null) {
+                    currentView.clearFocus();
+                }
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(currentView.getWindowToken(), 0);
                 }
             }
+//            }
         }
         return super.dispatchTouchEvent(event);
     }

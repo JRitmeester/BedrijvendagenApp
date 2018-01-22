@@ -38,11 +38,18 @@ public class ManualInputActivity extends AppCompatActivity {
         if (!hasEmail) {
             tvFirstName.setVisibility(View.GONE);
             tvLastName.setVisibility(View.GONE);
-        } else {
+        } else if (!firstName.equals("default") && !lastName.equals("default")) {
             tvFirstName.setVisibility(View.VISIBLE);
             tvLastName.setVisibility(View.VISIBLE);
             tvFirstName.setText(firstName);
             tvLastName.setText(lastName);
+            tvFirstName.setEnabled(false);
+            tvLastName.setEnabled(false);
+        } else {
+            tvFirstName.setVisibility(View.VISIBLE);
+            tvLastName.setVisibility(View.VISIBLE);
+            tvFirstName.setEnabled(true);
+            tvLastName.setEnabled(true);
         }
     }
 
@@ -58,9 +65,11 @@ public class ManualInputActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (etEmail.getText().toString().isEmpty()) {
-                    Toast.makeText(ManualInputActivity.this, "Please enter the student's email address.", Toast.LENGTH_LONG);
+                    Toast.makeText(ManualInputActivity.this, "Please enter the student's email address.", Toast.LENGTH_LONG).show();
                 } else {
                     // TODO: Verify email address?
+                    firstName = tvFirstName.getText().toString();
+                    lastName = tvLastName.getText().toString();
                     email = etEmail.getText().toString();
                     Log.d("EMAIL", "Email was set to be:" + email);
                     Intent commentIntent = new Intent(ManualInputActivity.this, CommentActivity.class);
@@ -73,6 +82,7 @@ public class ManualInputActivity extends AppCompatActivity {
     private void setFont() {
         setTypeface(this, tvFirstName);
         setTypeface(this, tvLastName);
+        setTypeface(this, etEmail);
     }
 
     @Override
