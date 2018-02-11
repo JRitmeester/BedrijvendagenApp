@@ -68,7 +68,6 @@ public class ConfirmationActivity extends AppCompatActivity {
     }
 
     private void setFont() {
-        // TODO: Replace footers with images and remove typeface for them.
         setTypeface(this, tvSuccess);
     }
 

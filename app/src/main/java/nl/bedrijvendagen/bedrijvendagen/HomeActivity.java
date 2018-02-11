@@ -62,6 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         // Also gets called when the activity is first launched.
         updateNames();
         updateCount();
+        StudentCredentials.reset();
     }
 
     private void initViews() {

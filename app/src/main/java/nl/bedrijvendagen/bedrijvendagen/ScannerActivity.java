@@ -30,6 +30,7 @@ import java.util.List;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.study;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
 
 public class ScannerActivity extends AppCompatActivity {
@@ -115,15 +116,16 @@ public class ScannerActivity extends AppCompatActivity {
 //                    // 2:   boolean email
 //                    // 3:   first name
 //                    // 4:   last name
+                    // 5:   study
                     if (qrResult[0].contentEquals("bd")) {
 //                        scanned = true;
                         userID = Integer.parseInt(qrResult[1]);
                         hasEmail = qrResult[2].equals("Y");
-                        Log.d("MAIL", String.valueOf(hasEmail));
                         firstName = qrResult[3];
                         lastName = qrResult[4];
-
-                        makeToast(userID + "," + hasEmail + "," + firstName + "," + lastName, Toast.LENGTH_LONG);
+                        if (qrResult.length == 6) {
+                            study = qrResult[5];
+                        }
 
                         if (!hasEmail) {
                             Intent manualInputIntent = new Intent(ScannerActivity.this, ManualInputActivity.class);

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
-import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.email;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
@@ -34,7 +32,11 @@ public class ManualInputActivity extends AppCompatActivity {
         initViews();
         initListeners();
         setFont();
+    }
 
+    @Override
+    public void onResume() {
+        StudentCredentials.reset();
         if (!hasEmail) {
             tvFirstName.setVisibility(View.GONE);
             tvLastName.setVisibility(View.GONE);
@@ -51,6 +53,7 @@ public class ManualInputActivity extends AppCompatActivity {
             tvFirstName.setEnabled(true);
             tvLastName.setEnabled(true);
         }
+        super.onResume();
     }
 
     private void initViews() {
@@ -64,16 +67,16 @@ public class ManualInputActivity extends AppCompatActivity {
         bSaveEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (etEmail.getText().toString().isEmpty()) {
-                    Toast.makeText(ManualInputActivity.this, "Please enter the student's email address.", Toast.LENGTH_LONG).show();
+                String email = etEmail.getText().toString();
+                if (!email.contains("@") || !email.contains(".")) {
+                    Toast.makeText(ManualInputActivity.this, "Please enter a valid email address.", Toast.LENGTH_LONG).show();
                 } else {
-                    // TODO: Verify email address?
                     firstName = tvFirstName.getText().toString();
                     lastName = tvLastName.getText().toString();
                     email = etEmail.getText().toString();
-                    Log.d("EMAIL", "Email was set to be:" + email);
                     Intent commentIntent = new Intent(ManualInputActivity.this, CommentActivity.class);
                     startActivity(commentIntent);
+                    finish();
                 }
             }
         });

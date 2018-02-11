@@ -2,6 +2,7 @@ package nl.bedrijvendagen.bedrijvendagen;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.animation.Animation;
@@ -22,18 +23,21 @@ import org.json.JSONObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.comment;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
-import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
 
 public class LoadActivity extends AppCompatActivity {
 
     // TODO: Verify data flow: 1. if QR code is not scanned. 2. If QR code is scanned partially. 3. If QR code is complete.
 
-    private String submitUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups";
+    private String submitUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups/";
+    //    private String submitUrl = "http://requestbin.fullcontact.com/x5o1pwx5/";
 
     private ImageView loadImage;
     private Animation rotation;
+    private CountDownTimer countdown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,21 @@ public class LoadActivity extends AppCompatActivity {
         rotation = AnimationUtils.loadAnimation(this, R.anim.rotate);
         rotation.setFillAfter(true);
         loadImage.startAnimation(rotation);
+
+    }
+
+    @Override
+    public void onResume() {
+        countdown = new CountDownTimer(15000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                error();
+            }
+        }.start();
+        super.onResume();
     }
 
     private void initViews() {
@@ -55,10 +74,11 @@ public class LoadActivity extends AppCompatActivity {
     private void sendEntry() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        Log.d("LOGIN", "Attempting to make StringRequest...");
+        Log.d("UPLOAD", "Attempting to make StringRequest...");
         StringRequest submitRequest = new StringRequest(Request.Method.POST, submitUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                countdown.cancel();
                 Log.d("LOGIN", response);
                 JSONObject jObj = null;
                 boolean valid;
@@ -72,7 +92,7 @@ public class LoadActivity extends AppCompatActivity {
                 }
                 try {
                     // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
-                    if (response.contains("created")) {
+                    if (response.contains("created") || response.contains("ok")) {
                         StudentCredentials.reset();
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
                         startActivity(confirmIntent);
@@ -89,12 +109,12 @@ public class LoadActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(LoadActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                error();
             }
         }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new LinkedHashMap<>();
-//                headers.put("Content-Type", "application/json");
                 headers.put("X-Requested-With", "XmlHttpRequest");
                 headers.put("X-Csrf-Token", CompanyCredentials.token);
                 return headers;
@@ -102,14 +122,18 @@ public class LoadActivity extends AppCompatActivity {
 
             @Override
             public byte[] getBody() throws AuthFailureError {
+                Log.d("Email", StudentCredentials.email);
+                Log.d("Comment", StudentCredentials.comment);
+                Log.d("ID", "" + StudentCredentials.userID);
+
                 Map<String, Object> params = new LinkedHashMap<>();
-                if (userID == -1) {
+
+                params.put("account_id", StudentCredentials.userID);
+                if (!hasEmail) {
                     params.put("email", StudentCredentials.email);
-                } else {
-                    params.put("account_id", StudentCredentials.userID);
                 }
-                params.put("comment", StudentCredentials.comment);
                 params.put("name", firstName + " " + lastName);
+                params.put("comments", comment);
                 return new JSONObject(params).toString().getBytes();
             }
 

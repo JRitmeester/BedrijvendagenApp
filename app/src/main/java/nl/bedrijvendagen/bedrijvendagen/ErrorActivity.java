@@ -63,6 +63,7 @@ public class ErrorActivity extends AppCompatActivity {
     }
 
     private void retry() {
+        Toast.makeText(this, "Retrying...", Toast.LENGTH_LONG).show();
         try {
             if (!isNetworkAvailable()) throw new Exception();
             RequestQueue queue = Volley.newRequestQueue(this);
@@ -76,8 +77,10 @@ public class ErrorActivity extends AppCompatActivity {
                     try {
                         jObj = new JSONObject(response);
                     } catch (Exception e) {
+                        Intent errorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+                        startActivity(errorIntent);
                         e.printStackTrace();
-                        Log.e("error", e.getMessage());
+                        finish();
                     }
                     try {
 
@@ -86,8 +89,8 @@ public class ErrorActivity extends AppCompatActivity {
                             Intent confirmIntent = new Intent(ErrorActivity.this, ConfirmationActivity.class);
                             startActivity(confirmIntent);
                         } else {
-                            Intent errorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
-                            startActivity(errorIntent);
+                            Intent secondErrorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+                            startActivity(secondErrorIntent);
                         }
                         finish();
                     } catch (Exception e) {
@@ -101,6 +104,9 @@ public class ErrorActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(ErrorActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                    Intent errorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+                    startActivity(errorIntent);
+                    finish();
                 }
             }) {
                 @Override
