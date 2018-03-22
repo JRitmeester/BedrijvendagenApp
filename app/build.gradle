@@ -6,8 +6,8 @@ android {
         applicationId "nl.bedrijvendagen.bedrijvendagen"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 16
-        versionName "1.5.2"
+        versionCode 25
+        versionName "1.6.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

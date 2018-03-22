@@ -24,9 +24,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.comment;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.email;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
-import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
 
 public class LoadActivity extends AppCompatActivity {
 
@@ -124,13 +125,16 @@ public class LoadActivity extends AppCompatActivity {
             public byte[] getBody() throws AuthFailureError {
                 Log.d("Email", StudentCredentials.email);
                 Log.d("Comment", StudentCredentials.comment);
-                Log.d("ID", "" + StudentCredentials.userID);
+                Log.d("ID", "" + userID);
 
                 Map<String, Object> params = new LinkedHashMap<>();
 
-                params.put("account_id", StudentCredentials.userID);
-                if (!hasEmail) {
+                if (!email.equals("default")) {
                     params.put("email", StudentCredentials.email);
+                }
+
+                if (userID != -1) {
+                    params.put("account_id", StudentCredentials.userID);
                 }
                 params.put("name", firstName + " " + lastName);
                 params.put("comments", comment);

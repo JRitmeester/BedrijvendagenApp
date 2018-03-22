@@ -1,6 +1,8 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -41,6 +43,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private TextView tvRecent1;
     private TextView tvRecent2;
+
+    private int count;
+
     private TextView tvRecent3;
 
     @Override
@@ -60,9 +65,27 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         // Pull the last three scanned visitors and set company name in top left.
         // Also gets called when the activity is first launched.
-        updateNames();
         updateCount();
+        updateNames();
         StudentCredentials.reset();
+        Refresher.refresh(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Closing Activity")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     private void initViews() {
@@ -141,7 +164,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public HashMap<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
-//                headers.put("Content-Type", "application/json");
                 headers.put("X-Requested-With", "XmlHttpRequest");
                 headers.put("X-Csrf-Token", CompanyCredentials.token);
                 return headers;
@@ -165,14 +187,17 @@ public class HomeActivity extends AppCompatActivity {
                     jArr = new JSONArray(response);
 
                     String[] names = new String[3];
-                    for (int i = 0; i < names.length; i++) {
+                    for (int i = 0; i < (count < 3 ? count : 3); i++) {
                         names[i] = jArr.getJSONObject(i).getString(("name"));
+                    }
+
+                    for (int i = 0; i < 3; i++) {
                         names[i] = names[i].equals("null") ? "Manual entry" : names[i];
                     }
                     Log.d("NAMES (PARSED)", names[0] + ", " + names[1] + ", " + names[2]);
-                    tvRecent1.setText(names[0]);
-                    tvRecent2.setText(names[1]);
-                    tvRecent3.setText(names[2]);
+                    if (names[0] != null) tvRecent1.setText(names[0]);
+                    if (names[1] != null) tvRecent2.setText(names[1]);
+                    if (names[2] != null) tvRecent3.setText(names[2]);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("error", e.getMessage());
@@ -211,7 +236,8 @@ public class HomeActivity extends AppCompatActivity {
                 try {
                     jObj = new JSONObject(response);
                     String countTitle = "Total scanned: ";
-                    countTitle += jObj.getString("count");
+                    count = Integer.parseInt(jObj.getString("count"));
+                    countTitle += count;
                     tvTotal.setText(countTitle);
                 } catch (Exception e) {
                     e.printStackTrace();

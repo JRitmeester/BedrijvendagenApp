@@ -1,8 +1,5 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
-/**
- * Created by Jeroen on 31-12-2017.
- */
 
 public class CompanyCredentials {
     public static boolean auth = false;
@@ -11,6 +8,7 @@ public class CompanyCredentials {
     public static String company = "";
     public static String email = "";
     public static String password = "";
+    public static String password_raw = "";
 
     public static void reset() {
         auth = false;
@@ -19,5 +17,6 @@ public class CompanyCredentials {
         company = "default";
         email = "default";
         password = "default";
+        password_raw = "default";
     }
 }

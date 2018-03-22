@@ -30,9 +30,9 @@
             android:id="@+id/ivBDLogo"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/logoHeight"
-            android:layout_alignParentStart="true"
             android:layout_below="@+id/tvCompany"
-            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="26dp"
             android:contentDescription="Bedrijvendagen Logo"
             app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
 

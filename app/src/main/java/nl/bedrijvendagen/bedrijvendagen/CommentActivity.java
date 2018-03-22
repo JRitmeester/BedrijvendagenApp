@@ -67,19 +67,22 @@ public class CommentActivity extends AppCompatActivity {
         tvScannedName = findViewById(R.id.tvScannedName);
         etCommentField = findViewById(R.id.etCommentField);
         bSave = findViewById(R.id.bSave);
-
+        filler = findViewById(R.id.filler);
+        ivLogo = findViewById(R.id.ivBDLogo);
         if (!firstName.equals("default") && !lastName.equals("default")) {
             tvScannedName.setText(firstName + " " + lastName);
         }
+
     }
 
     private void initListeners() {
-        filler = findViewById(R.id.filler);
-        ivLogo = findViewById(R.id.ivBDLogo);
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 comment = etCommentField.getText().toString();
+                if (comment.equals("Add comment...")) {
+                    comment = "";
+                }
                 Intent loadIntent = new Intent(CommentActivity.this, LoadActivity.class);
                 startActivity(loadIntent);
                 finish();
@@ -95,15 +98,15 @@ public class CommentActivity extends AppCompatActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {     // On touch event
             View v = getCurrentFocus();
-            if (v instanceof EditText) {
+            if (v instanceof EditText) {                        // If the touched area is an EditText
                 Rect outRect = new Rect();
                 v.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {  // If you touch outside the EditText...
                     v.clearFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0); // ... then hide the keyboard.
                 }
             }
         }

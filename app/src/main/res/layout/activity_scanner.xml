@@ -24,16 +24,6 @@
             android:layout_centerVertical="true"
             android:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/ivOverlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Scan overlay"
-            android:cropToPadding="false"
-            android:scaleType="centerCrop"
-            android:visibility="visible"
-            app:srcCompat="@drawable/qrview" />
-
         <Button
             android:id="@+id/bManualInput"
             android:layout_width="wrap_content"
@@ -44,6 +34,15 @@
             android:backgroundTint="@color/bdRed"
             android:text="Manual Input"
             android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/qrview" />
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

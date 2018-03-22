@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.email;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
@@ -36,8 +37,7 @@ public class ManualInputActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        StudentCredentials.reset();
-        if (!hasEmail) {
+        if (!email.equals("default")) {
             tvFirstName.setVisibility(View.GONE);
             tvLastName.setVisibility(View.GONE);
         } else if (!firstName.equals("default") && !lastName.equals("default")) {
@@ -53,6 +53,7 @@ public class ManualInputActivity extends AppCompatActivity {
             tvFirstName.setEnabled(true);
             tvLastName.setEnabled(true);
         }
+        Refresher.refresh(this);
         super.onResume();
     }
 
@@ -73,7 +74,8 @@ public class ManualInputActivity extends AppCompatActivity {
                 } else {
                     firstName = tvFirstName.getText().toString();
                     lastName = tvLastName.getText().toString();
-                    email = etEmail.getText().toString();
+                    StudentCredentials.email = email;
+                    hasEmail = true;
                     Intent commentIntent = new Intent(ManualInputActivity.this, CommentActivity.class);
                     startActivity(commentIntent);
                     finish();

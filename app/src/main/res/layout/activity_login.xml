@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/ivBubbles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:adjustViewBounds="false"
         android:contentDescription="Bubble background"
         android:cropToPadding="false"
@@ -32,14 +32,15 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/svWrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="nl.bedrijvendagen.bedrijvendagen.LoginActivity"
-        android:layout_above="@id/ivFooter">
+        android:layout_above="@id/ivFooter"
+        tools:context="nl.bedrijvendagen.bedrijvendagen.LoginActivity">
 
         <RelativeLayout
             android:id="@+id/rlSuper"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
 
@@ -47,9 +48,8 @@
                 android:id="@+id/rlWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="15dp"
                 android:padding="@dimen/sideMargin"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -66,11 +66,8 @@
                     android:id="@+id/ivBDLogo"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/logoHeight"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@id/filler"
-                    android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginTop="20dp"
+                    android:layout_alignStart="@+id/tvLogin"
                     android:contentDescription="Bedrijvendagen Logo"
                     app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
 
@@ -97,6 +94,7 @@
                     android:ems="10"
                     android:hint="E-mail address"
                     android:inputType="textEmailAddress"
+                    android:selectAllOnFocus="false"
                     android:textColor="@android:color/background_dark"
                     android:textSize="14sp" />
 
@@ -120,8 +118,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/etPassword"
-                    android:layout_marginTop="@dimen/fieldSpacing"
                     android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/fieldSpacing"
                     android:backgroundTint="@color/bdRed"
                     android:fitsSystemWindows="true"
                     android:text="Login"

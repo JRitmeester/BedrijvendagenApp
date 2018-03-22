@@ -50,8 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button bLogin;
     private View filler;
 
-    private String loginUrl = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session";
-    private String lostPasswordUrl = "https://www.bedrijvendagentwente.nl/auth/front/accounts/lostPassword";
+    private String loginUrl = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session/";
+    private String lostPasswordUrl = "https://www.bedrijvendagentwente.nl/auth/front/accounts/lostPassword/";
 
     private RequestQueue queue;
 
@@ -125,6 +125,7 @@ public class LoginActivity extends AppCompatActivity {
         final String password_ = etPassword.getText().toString();
 
         StringRequest loginRequest = new StringRequest(Request.Method.POST, loginUrl, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
                 Log.d("LOGIN", response);
@@ -150,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
                         company = jObj.getString("company_name");
                         email = jObj.getString("email");
                         password = SHA1.hash(password_);
+                        Log.d("Password", password);
                         Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
                         startActivity(homeIntent);
                     } catch (JSONException e) {

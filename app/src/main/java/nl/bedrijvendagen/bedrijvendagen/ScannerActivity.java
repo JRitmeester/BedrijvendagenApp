@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -60,8 +59,9 @@ public class ScannerActivity extends AppCompatActivity {
                 .build();
 
 
+
         cameraSource = new CameraSource.Builder(this, barcodeDetector)
-                .setRequestedPreviewSize(Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels)
+                .setRequestedPreviewSize(720, 1280)
                 .setAutoFocusEnabled(true)
                 // TODO: setRequestedPreviewSize(w,h) implementeren.
                 .build();
@@ -108,6 +108,7 @@ public class ScannerActivity extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0 && !scanned) {
+                    makeToast("Code recognised", Toast.LENGTH_LONG);
                     scanned = true;
                     String[] qrResult = barcodes.valueAt(0).rawValue.split(";");
 //                    // Format:
@@ -126,6 +127,8 @@ public class ScannerActivity extends AppCompatActivity {
                         if (qrResult.length == 6) {
                             study = qrResult[5];
                         }
+
+                        makeToast(userID + ", " + firstName + ", " + lastName, Toast.LENGTH_LONG);
 
                         if (!hasEmail) {
                             Intent manualInputIntent = new Intent(ScannerActivity.this, ManualInputActivity.class);
@@ -149,6 +152,13 @@ public class ScannerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        StudentCredentials.reset();
+        Refresher.refresh(this);
+        super.onResume();
     }
 
     private void makeToast(final String message, final int duration) {

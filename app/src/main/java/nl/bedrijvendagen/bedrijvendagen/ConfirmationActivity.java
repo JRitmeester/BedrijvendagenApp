@@ -5,13 +5,16 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 
 public class ConfirmationActivity extends AppCompatActivity {
 
+    private RelativeLayout rlWrapper;
     private long timeCountInMilliSeconds = 3000;
     private ProgressBar progressBarCircle;
     private CountDownTimer countDownTimer;
@@ -24,6 +27,7 @@ public class ConfirmationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
         initViews();
+        initListeners();
         setFont();
 
         progressBarCircle.setProgress(0);
@@ -53,18 +57,26 @@ public class ConfirmationActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                Intent homeIntent = new Intent(ConfirmationActivity.this, HomeActivity.class);
-                startActivity(homeIntent);
-                resetTimer();
-                finish();
+                conclude();
             }
         }.start();
         countDownTimer.start();
     }
 
     private void initViews() {
+        rlWrapper = findViewById(R.id.rlWrapper);
         tvSuccess = findViewById(R.id.tvSuccess);
         progressBarCircle = findViewById(R.id.progressBarCircle);
+
+    }
+
+    private void initListeners() {
+        rlWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                conclude();
+            }
+        });
     }
 
     private void setFont() {
@@ -74,5 +86,13 @@ public class ConfirmationActivity extends AppCompatActivity {
     private void resetTimer() {
         progressBarCircle.setMax((int) timeCountInMilliSeconds / interval);
         progressBarCircle.setProgress(0);
+    }
+
+    private void conclude() {
+        // When clicked anywhere, reset the timer and go to home screen.
+        Intent homeIntent = new Intent(ConfirmationActivity.this, HomeActivity.class);
+        startActivity(homeIntent);
+        resetTimer();
+        finish();
     }
 }
