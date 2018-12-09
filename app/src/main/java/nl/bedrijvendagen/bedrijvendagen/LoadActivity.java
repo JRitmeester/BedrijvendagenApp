@@ -34,11 +34,12 @@ public class LoadActivity extends AppCompatActivity {
     // TODO: Verify data flow: 1. if QR code is not scanned. 2. If QR code is scanned partially. 3. If QR code is complete.
 
     private String submitUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups/";
-    //    private String submitUrl = "http://requestbin.fullcontact.com/x5o1pwx5/";
 
     private ImageView loadImage;
     private Animation rotation;
     private CountDownTimer countdown;
+
+    private boolean overwritingExistingComment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,16 @@ public class LoadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_load);
 
         initViews();
-        sendEntry();
+
+        if (getIntent().hasExtra("overwriting")) {
+            overwritingExistingComment = getIntent().getExtras().getBoolean("overwriting");
+        }
+
+        if (overwritingExistingComment) {
+            overwrite();
+        } else {
+            sendEntry();
+        }
 
         rotation = AnimationUtils.loadAnimation(this, R.anim.rotate);
         rotation.setFillAfter(true);
@@ -137,6 +147,76 @@ public class LoadActivity extends AppCompatActivity {
                     params.put("account_id", StudentCredentials.userID);
                 }
                 params.put("name", firstName + " " + lastName);
+                params.put("comments", comment);
+                return new JSONObject(params).toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        queue.add(submitRequest);
+    }
+
+    private void overwrite() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String overwriteUrl = submitUrl + userID;
+        Log.d("UPLOAD", "Attempting to make StringRequest...");
+        StringRequest submitRequest = new StringRequest(Request.Method.POST, submitUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                countdown.cancel();
+                Log.d("LOGIN", response);
+                JSONObject jObj = null;
+                boolean success = false;
+                try {
+                    jObj = new JSONObject(response);
+                    success = comment.equals(jObj.getString("comments"));
+                    if (!success) {
+                        throw new Exception();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    error();
+                }
+                try {
+                    // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
+                    if (success) {
+                        StudentCredentials.reset();
+                        Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
+                        confirmIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(confirmIntent);
+                        finish();
+                    }
+//                   else {
+//                        error();
+//                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    error();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(LoadActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                error();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new LinkedHashMap<>();
+                headers.put("X-Requested-With", "XmlHttpRequest");
+                headers.put("X-Csrf-Token", CompanyCredentials.token);
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                Map<String, Object> params = new LinkedHashMap<>();
+
                 params.put("comments", comment);
                 return new JSONObject(params).toString().getBytes();
             }

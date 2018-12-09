@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bdBlue">#00bdf2</color>
-    <color name="bdBlack">#152138</color>
+    <color name="bdBlack">#000000</color>
+    <color name="pureBlack">#000000</color>
     <color name="bdRed">#ec3038</color>
     <color name="white">#ffffff</color>
-    <color name="beige">#faebd7</color>
+    <color name="beige">#a56b1f</color>
     <color name="green">#2bd922</color>
+    <color name="bdLightBlue">#219ed8</color>
 </resources>

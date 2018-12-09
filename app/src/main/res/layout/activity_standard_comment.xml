@@ -6,25 +6,21 @@
     android:layout_height="match_parent"
     tools:context="nl.bedrijvendagen.bedrijvendagen.HomeActivity">
 
-    <!--<ImageView-->
-    <!--android:id="@+id/ivBubbles"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:adjustViewBounds="false"-->
-    <!--android:contentDescription="Bubble background"-->
-    <!--android:cropToPadding="false"-->
-    <!--android:scaleType="centerCrop"-->
-    <!--android:visibility="visible"-->
-    <!--app:srcCompat="@drawable/bubbles" />-->
-
     <RelativeLayout
         android:id="@+id/rlWrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <View
+            android:id="@+id/filler"
+            android:layout_width="0dp"
+            android:layout_height="40dp" />
 
         <ImageView
             android:id="@+id/ivBDLogo"
@@ -32,7 +28,7 @@
             android:layout_height="@dimen/logoHeight"
             android:layout_below="@+id/tvCompany"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:contentDescription="Bedrijvendagen Logo"
             app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
 
@@ -40,12 +36,12 @@
             android:id="@+id/rlFields"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_below="@+id/ivBDLogo"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="@dimen/sideMargin"
-            android:layout_marginRight="@dimen/sideMargin"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="@dimen/sideMargin">
 
             <TextView
                 android:id="@+id/tvStandard"
@@ -54,80 +50,68 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/fieldSpacing"
-                android:text="RECENTLY SCANNED"
+                android:text="STANDARD COMMENTS"
                 android:textAlignment="center"
                 android:textColor="@color/bdRed"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/bScan"
+
+            <EditText
+                android:id="@+id/etComment1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvRecent3"
+                android:layout_below="@+id/tvStandard"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/fieldSpacing"
+                android:hint="Comment 1: max 20 characters"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etComment2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etComment1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/recentNameSpacing"
+                android:hint="Comment 2: max 20 characters"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/etComment3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etComment2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/recentNameSpacing"
+                android:hint="Comment 3: max 20 characters"
+                android:textAlignment="center"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/bSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/etComment3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/bdRed"
-                android:text="SCAN QR-CODE"
+                android:text="SAVE"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/tvChangeComments"
+                android:id="@+id/tvSkip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/bScan"
+                android:layout_below="@+id/bSave"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="Adjust Standard Comments?"
-                android:textColor="@color/bdRed"
-                android:textStyle="italic" />
+                android:text="Skip"
+                android:textColor="@color/bdRed" />
 
-            <TextView
-                android:id="@+id/tvTotalScans"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvStandard"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/halfFieldSpacing"
-                android:text="TOTAL SCANS: X"
-                android:textAlignment="center"
-                android:textColor="@color/bdRed"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvRecent1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvTotalScans"
-                android:layout_centerHorizontal="true"
-                android:text="Student 1"
-                android:textAlignment="center"
-                android:textColor="@color/pureBlack" />
-
-            <TextView
-                android:id="@+id/tvRecent2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvRecent1"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/recentNameSpacing"
-                android:text="Student 2"
-                android:textAlignment="center"
-                android:textColor="@color/pureBlack" />
-
-            <TextView
-                android:id="@+id/tvRecent3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvRecent2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/recentNameSpacing"
-                android:text="Student 3"
-                android:textAlignment="center"
-                android:textColor="@color/pureBlack" />
 
         </RelativeLayout>
 
@@ -142,7 +126,7 @@
             android:layout_marginTop="@dimen/topFieldsMargin"
             android:text="Company X"
             android:textAlignment="viewStart"
-            android:textColor="@color/bdBlack" />
+            android:textColor="@color/bdRed" />
 
         <TextView
             android:id="@+id/tvLogout"
@@ -155,7 +139,7 @@
             android:layout_marginRight="@dimen/topFieldsMargin"
             android:text="Log out"
             android:textAlignment="textEnd"
-            android:textColor="@color/bdLightBlue" />
+            android:textColor="@color/bdRed" />
     </RelativeLayout>
 
     <ImageView

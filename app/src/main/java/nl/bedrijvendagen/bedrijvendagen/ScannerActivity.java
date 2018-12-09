@@ -71,15 +71,40 @@ public class ScannerActivity extends AppCompatActivity {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 requestPermission();
                 try {
-                    if (ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
+//                    if (ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                        // TODO: Consider calling
+//                        //    ActivityCompat#requestPermissions
+//                        // here to request the missing permissions, and then overriding
+//                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                        //                                          int[] grantResults)
+//                        // to handle the case where the user grants the permission. See the documentation
+//                        // for ActivityCompat#requestPermissions for more details.
+//                        return;
+//                    }
+                    if (ContextCompat.checkSelfPermission(ScannerActivity.this,
+                            Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                        // Permission is not granted
+                        // Should we show an explanation?
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(ScannerActivity.this,
+                                Manifest.permission.CAMERA)) {
+                            // Show an explanation to the user *asynchronously* -- don't block
+                            // this thread waiting for the user's response! After the user
+                            // sees the explanation, try again to request the permission.
+                            makeToast("Please grant camera permission to use the QR scanner!", Toast.LENGTH_LONG);
+                        } else {
+                            // No explanation needed; request the permission
+                            ActivityCompat.requestPermissions(ScannerActivity.this,
+                                    new String[]{Manifest.permission.CAMERA},
+                                    MY_PERMISSIONS_REQUEST_CAMERA);
+
+                            // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                            // app-defined int constant. The callback method gets the
+                            // result of the request.
+                        }
+                    } else {
+                        // Permission has already been granted
                     }
                     cameraSource.start(svCamera.getHolder());
                 } catch (IOException e) {
@@ -136,6 +161,7 @@ public class ScannerActivity extends AppCompatActivity {
 //                            scanned = false;
                         } else {
                             Intent commentIntent = new Intent(ScannerActivity.this, CommentActivity.class);
+                            commentIntent.putExtra("isOverwriting", false);
                             startActivity(commentIntent);
 //                            scanned test= false;
                         }
@@ -280,7 +306,7 @@ public class ScannerActivity extends AppCompatActivity {
         prefEditor.putInt("width", optimalSize.getWidth());
         prefEditor.putInt("height", optimalSize.getHeight());
 
-        prefEditor.commit();
+        prefEditor.apply();
 
 //      Log.d("CameraActivity", "Using size: " + optimalSize.width + "w " + optimalSize.height + "h");
         return optimalSize;

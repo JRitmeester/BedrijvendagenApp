@@ -18,8 +18,7 @@
         android:required="false" />
     <uses-feature
         android:name="android.permission.ACCESS_NETWORK_STATE"
-        android:required="false"
-        />
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -48,7 +47,11 @@
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity android:name=".SecondErrorActivity" />
         <activity android:name=".ScannerActivity" />
-        <activity android:name=".LoadActivity"></activity>
+        <activity android:name=".LoadActivity" />
+        <activity
+            android:name=".StandardCommentActivity"
+            android:label="@string/title_activity_standard_comment"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

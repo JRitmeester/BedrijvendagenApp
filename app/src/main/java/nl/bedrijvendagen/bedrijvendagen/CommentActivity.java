@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +18,7 @@ import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.comment;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
+import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -27,6 +28,15 @@ public class CommentActivity extends AppCompatActivity {
     private ImageView ivLogo;
     private View filler;
 
+    private String parsedName;
+    private String parsedId;
+    private String parsedComment;
+    private boolean overwriting = false;
+
+    private String standardComment1;
+    private String standardComment2;
+    private String standardComment3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,32 +45,29 @@ public class CommentActivity extends AppCompatActivity {
         initViews();
         initListeners();
         setFont();
+        readStandardComments();
 
-        findViewById(android.R.id.content).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
+//
 
-                Rect r = new Rect();
-                findViewById(android.R.id.content).getWindowVisibleDisplayFrame(r);
-                int screenHeight = findViewById(android.R.id.content).getRootView().getHeight();
+        Intent intent = getIntent();
+        overwriting = intent.getExtras().getBoolean("isOverwriting");
+        Log.d("Overwriting?", String.valueOf(overwriting));
+        if (overwriting) {
+//            if (intent.hasExtra("name")) {
+            parsedName = intent.getStringExtra("name");
+//            }
+//            if (intent.hasExtra("id")) {
+            parsedId = intent.getStringExtra("id");
+            Log.d("PARSEDID", parsedId);
+//            }
 
-                // r.bottom is the position above soft keypad or device button.
-                // if keypad is shown, the r.bottom is smaller than that before.
-                int keypadHeight = screenHeight - r.bottom;
+//            if (intent.hasExtra("comment")) {
+            parsedComment = intent.getStringExtra("comment");
+//            }
+        }
 
-                try {
-                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
-                        ivLogo.setVisibility(View.GONE);
-                        filler.setVisibility(View.VISIBLE);
-                    } else {
-                        ivLogo.setVisibility(View.VISIBLE);
-                        filler.setVisibility(View.GONE);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        Log.d("PARSED FROM HOME:", parsedName + ", " + parsedId + ", " + parsedComment);
+
     }
 
     private void initViews() {
@@ -69,8 +76,24 @@ public class CommentActivity extends AppCompatActivity {
         bSave = findViewById(R.id.bSave);
         filler = findViewById(R.id.filler);
         ivLogo = findViewById(R.id.ivBDLogo);
+
+        Log.d("Status", overwriting ? "Overwriting..." : "New entry being created.");
+        Intent intent = getIntent();
+        overwriting = intent.getExtras().getBoolean("isOverwriting");
+
+        if (overwriting) {
+            firstName = parsedName;
+            lastName = "";
+            tvScannedName.setText(firstName);
+            parsedId = parsedId.replaceAll("\\D+", "");
+            userID = Integer.valueOf(parsedId);
+            etCommentField.setHint(parsedComment);
+            Log.d("OVERWRITING", "Set name...");
+        }
         if (!firstName.equals("default") && !lastName.equals("default")) {
-            tvScannedName.setText(firstName + " " + lastName);
+            if (!overwriting) {
+                tvScannedName.setText(firstName + " " + lastName);
+            }
         }
 
     }
@@ -80,10 +103,12 @@ public class CommentActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 comment = etCommentField.getText().toString();
+                // Remove any entries being the hinted text.
                 if (comment.equals("Add comment...")) {
                     comment = "";
                 }
                 Intent loadIntent = new Intent(CommentActivity.this, LoadActivity.class);
+                loadIntent.putExtra("overwriting", overwriting);
                 startActivity(loadIntent);
                 finish();
             }
@@ -94,6 +119,10 @@ public class CommentActivity extends AppCompatActivity {
         setTypeface(this, tvScannedName);
         setTypeface(this, etCommentField);
         setTypeface(this, bSave);
+    }
+
+    private void readStandardComments() {
+
     }
 
     @Override

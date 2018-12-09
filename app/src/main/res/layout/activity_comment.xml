@@ -31,15 +31,40 @@
             android:layout_width="0dp"
             android:layout_height="35dp" />
 
-        <ImageView
-            android:id="@+id/ivBDLogo"
+        <TextView
+            android:id="@+id/tvScannedName"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/logoHeight"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="23dp"
-            android:contentDescription="Bedrijvendagen Logo"
-            app:srcCompat="@drawable/bedrijvendagen_logo_kleur2" />
+            android:text="NAME"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/bdRed"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/etCommentField"
+            android:layout_width="@dimen/recentScansWidth"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvScannedName"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/fieldSpacing"
+            android:background="@drawable/shape"
+            android:ems="10"
+            android:gravity="start"
+            android:hint="Add Comment..."
+            android:inputType="textMultiLine"
+            android:isScrollContainer="true"
+            android:minHeight="120dp"
+            android:paddingLeft="@dimen/hintPadding"
+            android:paddingTop="@dimen/hintPadding"
+            android:paddingRight="@dimen/hintPadding"
+            android:paddingBottom="@dimen/hintPadding"
+            android:singleLine="false"
+            android:textColor="@color/bdBlack"
+            android:textSize="14sp" />
 
         <RelativeLayout
             android:id="@+id/rlFields"
@@ -47,53 +72,55 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/ivBDLogo"
+            android:layout_below="@+id/etCommentField"
             android:layout_marginLeft="@dimen/sideMargin"
             android:layout_marginRight="@dimen/sideMargin"
             android:layout_marginTop="@dimen/fieldSpacing">
 
-            <TextView
-                android:id="@+id/tvScannedName"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/bComment1"
+                android:layout_width="@dimen/recentScansWidth"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:text="NAME"
-                android:textAlignment="center"
-                android:textColor="@color/bdRed"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/bdRed"
+                android:text="SAVE"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+            <!--android:layout_below="@id/etCommentField"-->
+            />
 
-
-            <EditText
-                android:id="@+id/etCommentField"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/bComment2"
+                android:layout_width="@dimen/recentScansWidth"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvScannedName"
+                android:layout_below="@id/bComment1"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/fieldSpacing"
-                android:background="@drawable/shape"
-                android:ems="10"
-                android:gravity="start"
-                android:hint="Add Comment..."
-                android:inputType="textMultiLine"
-                android:isScrollContainer="true"
-                android:minHeight="120dp"
-                android:paddingBottom="@dimen/hintPadding"
-                android:paddingLeft="@dimen/hintPadding"
-                android:paddingRight="@dimen/hintPadding"
-                android:paddingTop="@dimen/hintPadding"
-                android:singleLine="false"
-                android:textColor="@color/bdBlack"
-                android:textSize="14sp" />
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/bdRed"
+                android:text="SAVE"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/bComment3"
+                android:layout_width="@dimen/recentScansWidth"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bComment2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/bdRed"
+                android:text="SAVE"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/bSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/bComment3"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/etCommentField"
-                android:layout_marginTop="@dimen/fieldSpacing"
+                android:layout_marginTop="20dp"
                 android:backgroundTint="@color/bdRed"
                 android:text="SAVE"
                 android:textColor="@color/white"

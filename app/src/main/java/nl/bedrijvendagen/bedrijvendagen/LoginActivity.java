@@ -49,9 +49,10 @@ public class LoginActivity extends AppCompatActivity {
     private ImageView ivLogo;
     private Button bLogin;
     private View filler;
+    private TextView tvLogin;
 
     private String loginUrl = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session/";
-    private String lostPasswordUrl = "https://www.bedrijvendagentwente.nl/auth/front/accounts/lostPassword/";
+    private String lostPasswordUrl = "https://bedrijvendagentwente.nl/auth/front/accounts/lostPassword/";
 
     private RequestQueue queue;
 
@@ -63,7 +64,37 @@ public class LoginActivity extends AppCompatActivity {
         initViews();
         initListeners();
         setFont();
+        initLogoVisibilityChange();
 
+    }
+
+    private void initViews() {
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
+        tvLostPassword = findViewById(R.id.tvLostPassword);
+        bLogin = findViewById(R.id.bLogin);
+        tvLogin = findViewById(R.id.tvLogin);
+    }
+
+    private void initListeners() {
+        filler = findViewById(R.id.filler);
+        ivLogo = findViewById(R.id.ivBDLogo);
+        bLogin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                login();
+            }
+        });
+
+        tvLostPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(lostPasswordUrl));
+                startActivity(browserIntent);
+            }
+        });
+    }
+
+    private void initLogoVisibilityChange() {
         findViewById(android.R.id.content).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -91,38 +122,23 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
-    private void initViews() {
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
-        tvLostPassword = findViewById(R.id.tvLostPassword);
-        bLogin = findViewById(R.id.bLogin);
-    }
-
-    private void initListeners() {
-        filler = findViewById(R.id.filler);
-        ivLogo = findViewById(R.id.ivBDLogo);
-        bLogin.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                login();
-            }
-        });
-
-        tvLostPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(lostPasswordUrl));
-                startActivity(browserIntent);
-            }
-        });
+    @Override
+    public void onBackPressed() {
+        tvLogin.setText("LOG IN HERE");
+        super.onBackPressed();
     }
 
     private void login() {
         queue = Volley.newRequestQueue(this);
 
-        final String email_ = etEmail.getText().toString();
-        final String password_ = etPassword.getText().toString();
+//        final String email_ = etEmail.getText().toString();
+//        final String password_ = etPassword.getText().toString();
+
+        final String email_ = "j.ritmeester@ice.utwente.nl";
+        final String password_ = "elnino123";
 
         StringRequest loginRequest = new StringRequest(Request.Method.POST, loginUrl, new Response.Listener<String>() {
 
@@ -152,8 +168,8 @@ public class LoginActivity extends AppCompatActivity {
                         email = jObj.getString("email");
                         password = SHA1.hash(password_);
                         Log.d("Password", password);
-                        Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(homeIntent);
+                        Intent standardCommentIntent = new Intent(LoginActivity.this, StandardCommentActivity.class);
+                        startActivity(standardCommentIntent);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (NullPointerException e) {
@@ -166,6 +182,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(LoginActivity.this, "Invalid login", Toast.LENGTH_LONG).show();
+                tvLogin.setText("INVALID LOGIN");
             }
         }) {
             @Override
@@ -203,6 +220,8 @@ public class LoginActivity extends AppCompatActivity {
         tvLostPassword.setPaintFlags(tvLostPassword.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
     }
 
+
+    // Hide keyboard when touched outside the fields.
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -212,35 +231,34 @@ public class LoginActivity extends AppCompatActivity {
                 exceptionRects[i] = new Rect();
                 exceptions[i].getGlobalVisibleRect(exceptionRects[i]);
             }
-//            boolean exceptionWasPressed = false;
-//            for (int i = 0; i < exceptions.length; i++) {
-//                Rect outRect2 = new Rect();
-//                exceptions[i].getGlobalVisibleRect(outRect2);
-//                if (outRect2.contains((int)event.getRawX(), (int) event.getRawY())) {
-//                    exceptionWasPressed = true;
-//                    break;
-//                }
-//            }
-//
+
             View currentView = getCurrentFocus();
             boolean exceptionFound = false;
-//            if (currentView instanceof EditText) {
+
             for (Rect e : exceptionRects) {
+                // See if the touch was inside the text fields.
                 if (e.contains((int) event.getRawX(), (int) event.getRawY())) {
                     exceptionFound = true;
                     break;
                 }
-                }
+            }
+            // If not...
             if (!exceptionFound) {
                 if (currentView != null) {
                     currentView.clearFocus();
                 }
+                // ... hide the keyboard.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
-                    imm.hideSoftInputFromWindow(currentView.getWindowToken(), 0);
+                    try {
+                        imm.hideSoftInputFromWindow(currentView.getWindowToken(), 0);
+                        tvLogin.setText("LOG IN HERE");
+                    } catch (NullPointerException e) {
+                        // Do nothing, stop breaking!
+                        Log.e("No focus", "No focus points were detecte so things would've broken for some reason. Everything is fine though...kjj.");
+                    }
                 }
             }
-//            }
         }
         return super.dispatchTouchEvent(event);
     }

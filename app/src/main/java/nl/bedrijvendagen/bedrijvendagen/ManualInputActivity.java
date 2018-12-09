@@ -38,9 +38,11 @@ public class ManualInputActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         if (!email.equals("default")) {
+            // If the email is set anywhere, remove the fields.
             tvFirstName.setVisibility(View.GONE);
             tvLastName.setVisibility(View.GONE);
         } else if (!firstName.equals("default") && !lastName.equals("default")) {
+            // If the entry is complete, but something not right, display the fields.
             tvFirstName.setVisibility(View.VISIBLE);
             tvLastName.setVisibility(View.VISIBLE);
             tvFirstName.setText(firstName);
@@ -48,6 +50,7 @@ public class ManualInputActivity extends AppCompatActivity {
             tvFirstName.setEnabled(false);
             tvLastName.setEnabled(false);
         } else {
+            // Otherwise, it's a regular manual input.
             tvFirstName.setVisibility(View.VISIBLE);
             tvLastName.setVisibility(View.VISIBLE);
             tvFirstName.setEnabled(true);
@@ -77,6 +80,7 @@ public class ManualInputActivity extends AppCompatActivity {
                     StudentCredentials.email = email;
                     hasEmail = true;
                     Intent commentIntent = new Intent(ManualInputActivity.this, CommentActivity.class);
+                    commentIntent.putExtra("isOverwriting", false);
                     startActivity(commentIntent);
                     finish();
                 }

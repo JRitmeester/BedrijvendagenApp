@@ -26,6 +26,8 @@ import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.token;
 
 public class Refresher {
 
+    // Added in an attempt to prevent the logout after X minutes without being used.
+
     private static RequestQueue queue_;
     private static String update_url = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session/";
 

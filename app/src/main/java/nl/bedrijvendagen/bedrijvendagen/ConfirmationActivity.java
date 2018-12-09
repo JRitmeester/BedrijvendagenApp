@@ -43,7 +43,6 @@ public class ConfirmationActivity extends AppCompatActivity {
                 }, 1000);
             }
         });
-//        startTimer();
     }
 
     private void startTimer() {

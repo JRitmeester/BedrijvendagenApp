@@ -112,7 +112,6 @@ public class ErrorActivity extends AppCompatActivity {
                 @Override
                 public Map<String, String> getHeaders() {
                     Map<String, String> headers = new LinkedHashMap<>();
-//                headers.put("Content-Type", "application/json");
                     headers.put("X-Requested-With", "XmlHttpRequest");
                     headers.put("X-Csrf-Token", CompanyCredentials.token);
                     return headers;

@@ -1,7 +1,6 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -40,6 +39,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvRecently;
     private TextView tvTotal;
     private Button bScanQR;
+    private TextView tvChangeComments;
 
     private TextView tvRecent1;
     private TextView tvRecent2;
@@ -47,7 +47,9 @@ public class HomeActivity extends AppCompatActivity {
     private int count;
 
     private TextView tvRecent3;
-
+    private String[] names = new String[3];
+    private String[] ids = new String[3];
+    private String[] comments = new String[3];
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +82,7 @@ public class HomeActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        finish();
+                        logout();
                     }
 
                 })
@@ -91,7 +93,7 @@ public class HomeActivity extends AppCompatActivity {
     private void initViews() {
         tvLogout = findViewById(R.id.tvLogout);
         tvCompany = findViewById(R.id.tvCompany);
-        tvRecently = findViewById(R.id.tvRecently);
+        tvRecently = findViewById(R.id.tvStandard);
         tvTotal = findViewById(R.id.tvTotalScans);
         bScanQR = findViewById(R.id.bScan);
 
@@ -99,7 +101,13 @@ public class HomeActivity extends AppCompatActivity {
         tvRecent2 = findViewById(R.id.tvRecent2);
         tvRecent3 = findViewById(R.id.tvRecent3);
 
+        tvChangeComments = findViewById(R.id.tvChangeComments);
+
         tvCompany.setText(CompanyCredentials.company);
+
+        // Set underline for tvLostPassword
+        tvChangeComments.setPaintFlags(tvChangeComments.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
     }
 
     private void initListeners() {
@@ -115,6 +123,51 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent scanIntent = new Intent(HomeActivity.this, ScannerActivity.class);
                 startActivity(scanIntent);
+            }
+        });
+
+        tvRecent1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Open comment view with name. Parse ID to comment activity I guess
+                Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
+                commentIntent.putExtra("name", names[0]);
+                commentIntent.putExtra("comment", comments[0]);
+                commentIntent.putExtra("id", ids[0]);
+                commentIntent.putExtra("isOverwriting", true);
+                startActivity(commentIntent);
+            }
+        });
+        tvRecent2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Open comment view with name. Parse ID to comment activity I guess
+                Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
+                commentIntent.putExtra("name", names[1]);
+                commentIntent.putExtra("comment", comments[1]);
+                commentIntent.putExtra("id", ids[1]);
+                commentIntent.putExtra("isOverwriting", true);
+                startActivity(commentIntent);
+            }
+        });
+        tvRecent3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Open comment view with name. Parse ID to comment activity I guess
+                Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
+                commentIntent.putExtra("name", names[2]);
+                commentIntent.putExtra("comment", comments[2]);
+                commentIntent.putExtra("id", ids[2]);
+                commentIntent.putExtra("isOverwriting", true);
+
+                startActivity(commentIntent);
+            }
+        });
+
+        tvChangeComments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Make intent to go to standardCommentActivity.
             }
         });
     }
@@ -145,10 +198,9 @@ public class HomeActivity extends AppCompatActivity {
                         CompanyCredentials.reset();
                         // Finish all activities and return to the login screen.
                         // This makes it not possible to use the "back" button to go from the login screen to the home (or any other) screen.
-                        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                        ComponentName cn = intent.getComponent();
-                        Intent mainIntent = Intent.makeRestartActivityTask(cn);
-                        startActivity(mainIntent);
+                        Intent loginIntent = new Intent(HomeActivity.this, LoginActivity.class);
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(loginIntent);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -186,13 +238,18 @@ public class HomeActivity extends AppCompatActivity {
                 try {
                     jArr = new JSONArray(response);
 
-                    String[] names = new String[3];
+                    //TODO: Test global instance of names (String[]).
+//                    String[] names = new String[3];
                     for (int i = 0; i < (count < 3 ? count : 3); i++) {
-                        names[i] = jArr.getJSONObject(i).getString(("name"));
+                        names[i] = jArr.getJSONObject(i).getString("name");
+                        ids[i] = jArr.getJSONObject(i).getString("id");
+                        comments[i] = jArr.getJSONObject(i).getString("comments");
                     }
 
                     for (int i = 0; i < 3; i++) {
                         names[i] = names[i].equals("null") ? "Manual entry" : names[i];
+                        ids[i] = (ids[i] == "null") ? "Manual entry" : ids[i];
+                        comments[i] = comments[i].equals("null") ? "Manual entry" : comments[i];
                     }
                     Log.d("NAMES (PARSED)", names[0] + ", " + names[1] + ", " + names[2]);
                     if (names[0] != null) tvRecent1.setText(names[0]);
