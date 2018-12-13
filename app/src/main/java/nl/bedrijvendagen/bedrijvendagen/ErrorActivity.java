@@ -35,11 +35,13 @@ public class ErrorActivity extends AppCompatActivity {
     private String submitUrl = "https://www.bedrijvendagentwente.nl/companies/api/student_signups";
     private int timeoutLength = 10000;
 
+    private boolean isOverwriting;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error);
 
+        isOverwriting = getIntent().getExtras().getBoolean("isOverwriting");
         initViews();
         initListeners();
         setFont();
@@ -53,7 +55,7 @@ public class ErrorActivity extends AppCompatActivity {
         bTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                retry();
+                retrySending();
             }
         });
     }
@@ -62,7 +64,7 @@ public class ErrorActivity extends AppCompatActivity {
         setTypeface(this, bTryAgain);
     }
 
-    private void retry() {
+    private void retrySending() {
         Toast.makeText(this, "Retrying...", Toast.LENGTH_LONG).show();
         try {
             if (!isNetworkAvailable()) throw new Exception();
@@ -125,6 +127,86 @@ public class ErrorActivity extends AppCompatActivity {
                     } else {
                         params.put("account_id", StudentCredentials.userID);
                     }
+                    params.put("comment", StudentCredentials.comment);
+                    return new JSONObject(params).toString().getBytes();
+                }
+
+                @Override
+                public String getBodyContentType() {
+                    return "application/json";
+                }
+            };
+            submitRequest.setRetryPolicy(new DefaultRetryPolicy(timeoutLength, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            queue.add(submitRequest);
+        } catch (Exception e) {
+            Intent errorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+            startActivity(errorIntent);
+            e.printStackTrace();
+            finish();
+        }
+    }
+
+    private void retryOverwriting() {
+        Toast.makeText(this, "Retrying...", Toast.LENGTH_LONG).show();
+
+        try {
+            if (!isNetworkAvailable()) throw new Exception();
+            RequestQueue queue = Volley.newRequestQueue(this);
+
+            String overwriteUrl = submitUrl + userID;
+
+            Log.d("LOGIN", "Attempting to make StringRequest...");
+            StringRequest submitRequest = new StringRequest(Request.Method.PUT, overwriteUrl, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d("LOGIN", response);
+                    JSONObject jObj = null;
+                    try {
+                        jObj = new JSONObject(response);
+                    } catch (Exception e) {
+                        Intent errorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+                        startActivity(errorIntent);
+                        e.printStackTrace();
+                        finish();
+                    }
+                    try {
+
+                        // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
+                        if (response.contains("created")) {
+                            Intent confirmIntent = new Intent(ErrorActivity.this, ConfirmationActivity.class);
+                            startActivity(confirmIntent);
+                        } else {
+                            Intent secondErrorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+                            startActivity(secondErrorIntent);
+                        }
+                        finish();
+                    } catch (Exception e) {
+                        Intent errorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+                        startActivity(errorIntent);
+                        e.printStackTrace();
+                        finish();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(ErrorActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                    Intent errorIntent = new Intent(ErrorActivity.this, SecondErrorActivity.class);
+                    startActivity(errorIntent);
+                    finish();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> headers = new LinkedHashMap<>();
+                    headers.put("X-Requested-With", "XmlHttpRequest");
+                    headers.put("X-Csrf-Token", CompanyCredentials.token);
+                    return headers;
+                }
+
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    Map<String, Object> params = new LinkedHashMap<>();
                     params.put("comment", StudentCredentials.comment);
                     return new JSONObject(params).toString().getBytes();
                 }

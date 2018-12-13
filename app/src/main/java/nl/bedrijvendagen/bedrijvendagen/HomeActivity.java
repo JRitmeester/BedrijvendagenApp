@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
+import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company;
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 
 public class HomeActivity extends AppCompatActivity {
@@ -67,10 +68,10 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         // Pull the last three scanned visitors and set company name in top left.
         // Also gets called when the activity is first launched.
+        Refresher.refresh(this);
         updateCount();
         updateNames();
         StudentCredentials.reset();
-        Refresher.refresh(this);
     }
 
     @Override
@@ -103,6 +104,7 @@ public class HomeActivity extends AppCompatActivity {
 
         tvChangeComments = findViewById(R.id.tvChangeComments);
 
+        Log.d("SETTING COMPANY", company);
         tvCompany.setText(CompanyCredentials.company);
 
         // Set underline for tvLostPassword
@@ -131,10 +133,13 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //TODO: Open comment view with name. Parse ID to comment activity I guess
                 Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
-                commentIntent.putExtra("name", names[0]);
-                commentIntent.putExtra("comment", comments[0]);
-                commentIntent.putExtra("id", ids[0]);
+//                commentIntent.putExtra("name", names[0]);
+//                commentIntent.putExtra("comment", comments[0]);
+//                commentIntent.putExtra("id", ids[0]);
                 commentIntent.putExtra("isOverwriting", true);
+                StudentCredentials.firstName = names[0];
+                StudentCredentials.comment = comments[0];
+                StudentCredentials.userID = Integer.parseInt(ids[0]);
                 startActivity(commentIntent);
             }
         });
@@ -143,9 +148,12 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //TODO: Open comment view with name. Parse ID to comment activity I guess
                 Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
-                commentIntent.putExtra("name", names[1]);
-                commentIntent.putExtra("comment", comments[1]);
-                commentIntent.putExtra("id", ids[1]);
+//                commentIntent.putExtra("name", names[1]);
+//                commentIntent.putExtra("comment", comments[1]);
+//                commentIntent.putExtra("id", ids[1]);
+                StudentCredentials.firstName = names[1];
+                StudentCredentials.comment = comments[1];
+                StudentCredentials.userID = Integer.parseInt(ids[1]);
                 commentIntent.putExtra("isOverwriting", true);
                 startActivity(commentIntent);
             }
@@ -155,9 +163,12 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //TODO: Open comment view with name. Parse ID to comment activity I guess
                 Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
-                commentIntent.putExtra("name", names[2]);
-                commentIntent.putExtra("comment", comments[2]);
-                commentIntent.putExtra("id", ids[2]);
+//                commentIntent.putExtra("name", names[2]);
+//                commentIntent.putExtra("comment", comments[2]);
+//                commentIntent.putExtra("id", ids[2]);
+                StudentCredentials.firstName = names[2];
+                StudentCredentials.comment = comments[2];
+                StudentCredentials.userID = Integer.parseInt(ids[2]);
                 commentIntent.putExtra("isOverwriting", true);
 
                 startActivity(commentIntent);
@@ -230,6 +241,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateNames() {
+        Log.d("NAMES", "Updating names...");
         StringRequest nameRequest = new StringRequest(Request.Method.GET, namesUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -247,7 +259,7 @@ public class HomeActivity extends AppCompatActivity {
                     }
 
                     for (int i = 0; i < 3; i++) {
-                        names[i] = names[i].equals("null") ? "Manual entry" : names[i];
+                        names[i] = (names[i].equals("null") || names[i] == null) ? "No name available" : names[i];
                         ids[i] = (ids[i] == "null") ? "Manual entry" : ids[i];
                         comments[i] = comments[i].equals("null") ? "Manual entry" : comments[i];
                     }

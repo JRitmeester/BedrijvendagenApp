@@ -15,12 +15,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 
+import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 
 public class StandardCommentActivity extends AppCompatActivity {
@@ -33,9 +43,13 @@ public class StandardCommentActivity extends AppCompatActivity {
     private EditText etComment3;
     private ImageView ivBDLogo;
     private View filler;
+    private TextView tvCompany;
+    private TextView tvLogout;
 
     private RequestQueue queue;
     private String saveCommentsUrl = "";
+
+    private String deleteURL = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +60,7 @@ public class StandardCommentActivity extends AppCompatActivity {
         initListeners();
         setFont();
         initLogoVisibilityChange();
+        queue = Volley.newRequestQueue(this);
     }
 
     private void initViews() {
@@ -57,6 +72,10 @@ public class StandardCommentActivity extends AppCompatActivity {
         etComment3 = findViewById(R.id.etComment3);
         ivBDLogo = findViewById(R.id.ivBDLogo);
         filler = findViewById(R.id.filler);
+        tvLogout = findViewById(R.id.tvLogout);
+
+        tvCompany = findViewById(R.id.tvCompany);
+        tvCompany.setText(CompanyCredentials.company);
     }
 
     private void initListeners() {
@@ -73,6 +92,13 @@ public class StandardCommentActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 saveComments();
+            }
+        });
+
+        tvLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logout();
             }
         });
     }
@@ -135,6 +161,50 @@ public class StandardCommentActivity extends AppCompatActivity {
             Log.e("Exception", "File write failed: " + e.toString());
         }
 
+    }
+
+    public void logout() {
+        StringRequest logoutRequest = new StringRequest(Request.Method.DELETE, deleteURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("LOGOUT", response);
+                JSONObject jObj;
+                try {
+                    jObj = new JSONObject(response);
+                    auth = Boolean.valueOf(jObj.getString("auth"));
+                    if (!auth) {
+                        CompanyCredentials.reset();
+                        // Finish all activities and return to the login screen.
+                        // This makes it not possible to use the "back" button to go from the login screen to the home (or any other) screen.
+                        Intent loginIntent = new Intent(StandardCommentActivity.this, LoginActivity.class);
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(loginIntent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("ERROR", e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(StandardCommentActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+            }
+        }) {
+            @Override
+            public HashMap<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("X-Requested-With", "XmlHttpRequest");
+                headers.put("X-Csrf-Token", CompanyCredentials.token);
+                return headers;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        queue.add(logoutRequest);
     }
 
     // Hide keyboard when touched outside the fields.

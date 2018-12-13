@@ -18,7 +18,6 @@ import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.comment;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
-import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
 
 public class CommentActivity extends AppCompatActivity {
 
@@ -42,32 +41,30 @@ public class CommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
 
+        Intent intent = getIntent();
+        overwriting = intent.getExtras().getBoolean("isOverwriting");
+        Log.d("Overwriting?", String.valueOf(overwriting));
+
         initViews();
         initListeners();
         setFont();
         readStandardComments();
 
-//
-
-        Intent intent = getIntent();
-        overwriting = intent.getExtras().getBoolean("isOverwriting");
-        Log.d("Overwriting?", String.valueOf(overwriting));
         if (overwriting) {
-//            if (intent.hasExtra("name")) {
-            parsedName = intent.getStringExtra("name");
-//            }
-//            if (intent.hasExtra("id")) {
-            parsedId = intent.getStringExtra("id");
-            Log.d("PARSEDID", parsedId);
-//            }
+////            if (intent.hasExtra("name")) {
+//            parsedName = intent.getStringExtra("name");
+////            }
+////            if (intent.hasExtra("id")) {
+//            parsedId = intent.getStringExtra("id");
+//            Log.d("PARSEDID", parsedId);
+////            }
+//
+////            if (intent.hasExtra("comment")) {
+//            parsedComment = intent.getStringExtra("comment");
+////            }
+//            Log.d("PARSED FROM HOME:", parsedName + ", " + parsedId + ", " + parsedComment);
 
-//            if (intent.hasExtra("comment")) {
-            parsedComment = intent.getStringExtra("comment");
-//            }
         }
-
-        Log.d("PARSED FROM HOME:", parsedName + ", " + parsedId + ", " + parsedComment);
-
     }
 
     private void initViews() {
@@ -77,18 +74,18 @@ public class CommentActivity extends AppCompatActivity {
         filler = findViewById(R.id.filler);
         ivLogo = findViewById(R.id.ivBDLogo);
 
-        Log.d("Status", overwriting ? "Overwriting..." : "New entry being created.");
+//        Log.d("Status", overwriting ? "Overwriting..." : "New entry being created.");
         Intent intent = getIntent();
         overwriting = intent.getExtras().getBoolean("isOverwriting");
 
         if (overwriting) {
-            firstName = parsedName;
-            lastName = "";
+//            firstName = parsedName;
+//            lastName = "";
             tvScannedName.setText(firstName);
-            parsedId = parsedId.replaceAll("\\D+", "");
-            userID = Integer.valueOf(parsedId);
-            etCommentField.setHint(parsedComment);
-            Log.d("OVERWRITING", "Set name...");
+//            parsedId = parsedId.replaceAll("\\D+", "");
+//            userID = Integer.valueOf(parsedId);
+//            etCommentField.setHint(parsedComment);
+            etCommentField.setHint(comment);
         }
         if (!firstName.equals("default") && !lastName.equals("default")) {
             if (!overwriting) {
@@ -102,8 +99,9 @@ public class CommentActivity extends AppCompatActivity {
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("Saving...", "Saving...");
                 comment = etCommentField.getText().toString();
-                // Remove any entries being the hinted text.
+                // Remove any entries that are the hinted text.
                 if (comment.equals("Add comment...")) {
                     comment = "";
                 }

@@ -126,7 +126,7 @@
             android:layout_marginTop="@dimen/topFieldsMargin"
             android:text="Company X"
             android:textAlignment="viewStart"
-            android:textColor="@color/bdRed" />
+            android:textColor="@color/pureBlack" />
 
         <TextView
             android:id="@+id/tvLogout"
@@ -139,7 +139,7 @@
             android:layout_marginRight="@dimen/topFieldsMargin"
             android:text="Log out"
             android:textAlignment="textEnd"
-            android:textColor="@color/bdRed" />
+            android:textColor="@color/bdLightBlue" />
     </RelativeLayout>
 
     <ImageView

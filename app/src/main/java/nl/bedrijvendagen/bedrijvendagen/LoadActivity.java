@@ -162,9 +162,10 @@ public class LoadActivity extends AppCompatActivity {
     private void overwrite() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String overwriteUrl = submitUrl + userID;
+//        String overwriteUrl = submitUrl + "{:" + userID + "}";
+        String overwriteUrl = "http://requestbin.fullcontact.com/1fx53rm1";
         Log.d("UPLOAD", "Attempting to make StringRequest...");
-        StringRequest submitRequest = new StringRequest(Request.Method.POST, submitUrl, new Response.Listener<String>() {
+        StringRequest submitRequest = new StringRequest(Request.Method.PUT, overwriteUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 countdown.cancel();
@@ -216,7 +217,6 @@ public class LoadActivity extends AppCompatActivity {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 Map<String, Object> params = new LinkedHashMap<>();
-
                 params.put("comments", comment);
                 return new JSONObject(params).toString().getBytes();
             }
@@ -231,6 +231,7 @@ public class LoadActivity extends AppCompatActivity {
 
     private void error() {
         Intent errorIntent = new Intent(this, ErrorActivity.class);
+        errorIntent.putExtra("isOverwriting", overwritingExistingComment);
         startActivity(errorIntent);
         finish();
     }

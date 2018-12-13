@@ -164,10 +164,12 @@ public class LoginActivity extends AppCompatActivity {
                         token = jObj.getString("_csrf");
                         auth = true;
                         company_id = Integer.parseInt(jObj.getString("id"));
+
                         company = jObj.getString("company_name");
+                        Log.d("Company", company);
                         email = jObj.getString("email");
                         password = SHA1.hash(password_);
-                        Log.d("Password", password);
+//                        Log.d("Password", password);
                         Intent standardCommentIntent = new Intent(LoginActivity.this, StandardCommentActivity.class);
                         startActivity(standardCommentIntent);
                     } catch (JSONException e) {
