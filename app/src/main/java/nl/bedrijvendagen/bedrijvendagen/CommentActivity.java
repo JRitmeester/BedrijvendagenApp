@@ -14,6 +14,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.comment;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
@@ -36,6 +41,10 @@ public class CommentActivity extends AppCompatActivity {
     private String standardComment2;
     private String standardComment3;
 
+    private Button bComment1;
+    private Button bComment2;
+    private Button bComment3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +54,10 @@ public class CommentActivity extends AppCompatActivity {
         overwriting = intent.getExtras().getBoolean("isOverwriting");
         Log.d("Overwriting?", String.valueOf(overwriting));
 
+        readStandardComments();
         initViews();
         initListeners();
         setFont();
-        readStandardComments();
 
         if (overwriting) {
 ////            if (intent.hasExtra("name")) {
@@ -74,6 +83,14 @@ public class CommentActivity extends AppCompatActivity {
         filler = findViewById(R.id.filler);
         ivLogo = findViewById(R.id.ivBDLogo);
 
+        bComment1 = findViewById(R.id.bComment1);
+        bComment2 = findViewById(R.id.bComment2);
+        bComment3 = findViewById(R.id.bComment3);
+
+        bComment1.setText(standardComment1);
+        bComment2.setText(standardComment2);
+        bComment3.setText(standardComment3);
+
 //        Log.d("Status", overwriting ? "Overwriting..." : "New entry being created.");
         Intent intent = getIntent();
         overwriting = intent.getExtras().getBoolean("isOverwriting");
@@ -92,6 +109,7 @@ public class CommentActivity extends AppCompatActivity {
                 tvScannedName.setText(firstName + " " + lastName);
             }
         }
+
 
     }
 
@@ -120,7 +138,24 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void readStandardComments() {
+        StringBuilder text = new StringBuilder();
+        try {
+            File standardComments = new File("standardComments.txt");
+            BufferedReader br = new BufferedReader(new FileReader(standardComments));
+            String line;
 
+            while((line = br.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] standardCommentsArr = text.toString().split("\n");
+        standardComment1 = standardCommentsArr[0];
+        standardComment2 = standardCommentsArr[1];
+        standardComment3 = standardCommentsArr[2];
     }
 
     @Override

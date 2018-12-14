@@ -1,7 +1,9 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
+import android.accounts.AccountAuthenticatorActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -37,6 +39,7 @@ import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company_id;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.email;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.password;
+import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.password_raw;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.token;
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 
@@ -50,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button bLogin;
     private View filler;
     private TextView tvLogin;
-
     private String loginUrl = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session/";
     private String lostPasswordUrl = "https://bedrijvendagentwente.nl/auth/front/accounts/lostPassword/";
 
@@ -65,6 +67,13 @@ public class LoginActivity extends AppCompatActivity {
         initListeners();
         setFont();
         initLogoVisibilityChange();
+
+        // Store the login credentials (hashed pasword).
+        SharedPreferences sp = getSharedPreferences("Login", MODE_PRIVATE);
+        String cachedUsername = sp.getString("USERNAME", "");
+//        String cachedPassword = sp.getString("PASSWORD", "");
+        etEmail.setText(cachedUsername);
+        etPassword.setText("xxxxxxxx"); // 8 filler characters to show that the password was stored.
 
     }
 
@@ -113,8 +122,10 @@ public class LoginActivity extends AppCompatActivity {
                     if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
                         ivLogo.setVisibility(View.GONE);
                         filler.setVisibility(View.VISIBLE);
+                        Log.d("LOGO", "Invisible");
                     } else {
                         ivLogo.setVisibility(View.VISIBLE);
+                        Log.d("LOGO", "Visible");
                         filler.setVisibility(View.GONE);
                     }
                 } catch (Exception e) {
@@ -137,8 +148,8 @@ public class LoginActivity extends AppCompatActivity {
 //        final String email_ = etEmail.getText().toString();
 //        final String password_ = etPassword.getText().toString();
 
-        final String email_ = "j.ritmeester@ice.utwente.nl";
-        final String password_ = "elnino123";
+        final String email_ = "j.c.ritmeester@student.utwente.nl";
+        final String password_ = "ApptestJeroen";
 
         StringRequest loginRequest = new StringRequest(Request.Method.POST, loginUrl, new Response.Listener<String>() {
 
@@ -170,6 +181,13 @@ public class LoginActivity extends AppCompatActivity {
                         email = jObj.getString("email");
                         password = SHA1.hash(password_);
 //                        Log.d("Password", password);
+
+                        SharedPreferences settings = getSharedPreferences("Login", MODE_PRIVATE);
+                        settings.edit()
+                                .putString("USERNAME", email)
+                                .putString("PASSWORD", password)
+                                .apply();
+
                         Intent standardCommentIntent = new Intent(LoginActivity.this, StandardCommentActivity.class);
                         startActivity(standardCommentIntent);
                     } catch (JSONException e) {
