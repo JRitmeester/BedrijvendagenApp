@@ -14,11 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.comment;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
@@ -54,7 +49,7 @@ public class CommentActivity extends AppCompatActivity {
         overwriting = intent.getExtras().getBoolean("isOverwriting");
         Log.d("Overwriting?", String.valueOf(overwriting));
 
-        readStandardComments();
+//        readStandardComments();
         initViews();
         initListeners();
         setFont();
@@ -86,6 +81,10 @@ public class CommentActivity extends AppCompatActivity {
         bComment1 = findViewById(R.id.bComment1);
         bComment2 = findViewById(R.id.bComment2);
         bComment3 = findViewById(R.id.bComment3);
+
+        standardComment1 = TextFileHandler.read(CommentActivity.this, "standardComment1.txt");
+        standardComment2 = TextFileHandler.read(CommentActivity.this, "standardComment2.txt");
+        standardComment3 = TextFileHandler.read(CommentActivity.this, "standardComment3.txt");
 
         bComment1.setText(standardComment1);
         bComment2.setText(standardComment2);
@@ -137,26 +136,26 @@ public class CommentActivity extends AppCompatActivity {
         setTypeface(this, bSave);
     }
 
-    private void readStandardComments() {
-        StringBuilder text = new StringBuilder();
-        try {
-            File standardComments = new File("standardComments.txt");
-            BufferedReader br = new BufferedReader(new FileReader(standardComments));
-            String line;
-
-            while((line = br.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String[] standardCommentsArr = text.toString().split("\n");
-        standardComment1 = standardCommentsArr[0];
-        standardComment2 = standardCommentsArr[1];
-        standardComment3 = standardCommentsArr[2];
-    }
+//    private void readStandardComments() {
+//        StringBuilder text = new StringBuilder();
+//        try {
+//            File standardComments = new File("standardComments.txt");
+//            BufferedReader br = new BufferedReader(new FileReader(standardComments));
+//            String line;
+//
+//            while((line = br.readLine()) != null) {
+//                text.append(line);
+//                text.append('\n');
+//            }
+//            br.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        String[] standardCommentsArr = text.toString().split("\n");
+//        standardComment1 = standardCommentsArr[0];
+//        standardComment2 = standardCommentsArr[1];
+//        standardComment3 = standardCommentsArr[2];
+//    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {

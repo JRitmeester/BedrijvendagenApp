@@ -26,8 +26,6 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
@@ -148,19 +146,20 @@ public class StandardCommentActivity extends AppCompatActivity {
 
     private void saveComments() {
         String[] standardComments = new String[3];
+
         standardComments[0] = etComment1.getText().toString();
         standardComments[1] = etComment2.getText().toString();
         standardComments[2] = etComment3.getText().toString();
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput("standardComments.txt", Context.MODE_PRIVATE));
-            for (int i = 0; i < 3; i++) {
-                outputStreamWriter.write(standardComments[i] + "\n");
-            }
-            outputStreamWriter.close();
-        } catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
 
+        if (standardComments[0] != null) {
+            TextFileHandler.write(this, "standardComment1.txt", standardComments[0]);
+        }
+        if (standardComments[1] != null) {
+            TextFileHandler.write(this, "standardComment2.txt", standardComments[1]);
+        }
+        if (standardComments[2] != null) {
+            TextFileHandler.write(this, "standardComment1.txt", standardComments[2]);
+        }
     }
 
     public void logout() {
