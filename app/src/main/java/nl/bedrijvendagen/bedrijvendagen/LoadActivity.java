@@ -28,6 +28,7 @@ import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.email;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.userID;
+import static nl.bedrijvendagen.bedrijvendagen.ToastWrapper.createToast;
 
 public class LoadActivity extends AppCompatActivity {
 
@@ -39,7 +40,8 @@ public class LoadActivity extends AppCompatActivity {
     private Animation rotation;
     private CountDownTimer countdown;
 
-    private boolean overwritingExistingComment;
+    private boolean overwriting;
+    private boolean hasFailedBefore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,20 +50,22 @@ public class LoadActivity extends AppCompatActivity {
 
         initViews();
 
-        if (getIntent().hasExtra("overwriting")) {
-            overwritingExistingComment = getIntent().getExtras().getBoolean("overwriting");
+        Intent intent = getIntent();
+        if (intent.hasExtra("overwriting")) {
+            overwriting = getIntent().getExtras().getBoolean("overwriting");
         }
 
-        if (overwritingExistingComment) {
-            overwrite();
-        } else {
-            sendEntry();
-        }
+        hasFailedBefore = intent.getExtras().getBoolean("hasFailedBefore");
 
         rotation = AnimationUtils.loadAnimation(this, R.anim.rotate);
         rotation.setFillAfter(true);
         loadImage.startAnimation(rotation);
 
+        if (overwriting) {
+            overwrite();
+        } else {
+            sendEntry();
+        }
     }
 
     @Override
@@ -72,7 +76,7 @@ public class LoadActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                error();
+                goToError();
             }
         }.start();
         super.onResume();
@@ -85,42 +89,43 @@ public class LoadActivity extends AppCompatActivity {
     private void sendEntry() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        Log.d("UPLOAD", "Attempting to make StringRequest...");
+        Log.d("UPLOAD", "Attempting to submit new entry.");
         StringRequest submitRequest = new StringRequest(Request.Method.POST, submitUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                // Stop waiting for the response to come through... because, well... it's here.
                 countdown.cancel();
                 Log.d("LOGIN", response);
                 JSONObject jObj = null;
-                boolean valid;
+                boolean valid = false;
+
                 try {
                     jObj = new JSONObject(response);
                     valid = Boolean.valueOf(jObj.getString("valid"));
-                    if (!valid) throw new Exception();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    error();
+                    goToError();
                 }
                 try {
                     // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
-                    if (response.contains("created") || response.contains("ok")) {
+                    if (valid) {
                         StudentCredentials.reset();
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
                         startActivity(confirmIntent);
                         finish();
                     } else {
-                        error();
+                        goToError();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    error();
+                    goToError();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LoadActivity.this, error.getMessage(), Toast.LENGTH_LONG);
-                error();
+                createToast("HTTP Error code: " + String.valueOf(error.networkResponse.statusCode), Toast.LENGTH_LONG,LoadActivity.this);
+                goToError();
             }
         }) {
             @Override
@@ -162,9 +167,8 @@ public class LoadActivity extends AppCompatActivity {
     private void overwrite() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-//        String overwriteUrl = submitUrl + "{:" + userID + "}";
-        String overwriteUrl = "http://requestbin.fullcontact.com/1fx53rm1";
-        Log.d("UPLOAD", "Attempting to make StringRequest...");
+        String overwriteUrl = submitUrl + userID;
+        Log.d("UPLOAD", "Attempting to overwrite...");
         StringRequest submitRequest = new StringRequest(Request.Method.PUT, overwriteUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -180,30 +184,29 @@ public class LoadActivity extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    error();
+                    goToError();
                 }
                 try {
                     // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
                     if (success) {
                         StudentCredentials.reset();
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
-                        confirmIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(confirmIntent);
                         finish();
                     }
-//                   else {
-//                        error();
-//                    }
+                   else {
+                        goToError();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    error();
+                    goToError();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LoadActivity.this, error.getMessage(), Toast.LENGTH_LONG);
-                error();
+                createToast("HTTP Error code: " + String.valueOf(error.networkResponse.statusCode), Toast.LENGTH_LONG,LoadActivity.this);
+                goToError();
             }
         }) {
             @Override
@@ -229,10 +232,17 @@ public class LoadActivity extends AppCompatActivity {
         queue.add(submitRequest);
     }
 
-    private void error() {
-        Intent errorIntent = new Intent(this, ErrorActivity.class);
-        errorIntent.putExtra("isOverwriting", overwritingExistingComment);
+    private void goToError() {
+        Intent errorIntent;
+        if (!hasFailedBefore) {
+            errorIntent = new Intent(this, ErrorActivity.class);
+        }
+        else {
+            errorIntent = new Intent(this, SecondErrorActivity.class);
+        }
+        errorIntent.putExtra("overwriting", overwriting);
         startActivity(errorIntent);
         finish();
     }
+
 }

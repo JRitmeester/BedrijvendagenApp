@@ -23,8 +23,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <ImageView
             android:id="@+id/ivBDLogo"
@@ -40,20 +42,18 @@
             android:id="@+id/rlFields"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:layout_below="@+id/ivBDLogo"
-            android:layout_marginLeft="@dimen/sideMargin"
-            android:layout_marginRight="@dimen/sideMargin"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:layout_marginTop="30dp">
 
             <TextView
-                android:id="@+id/tvStandard"
+                android:id="@+id/tvRecent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/fieldSpacing"
+                android:layout_marginBottom="@dimen/halfFieldSpacing"
                 android:text="RECENTLY SCANNED"
                 android:textAlignment="center"
                 android:textColor="@color/bdRed"
@@ -64,9 +64,9 @@
                 android:id="@+id/bScan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvRecent3"
+                android:layout_above="@+id/tvChangeComments"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/fieldSpacing"
+                android:layout_marginBottom="20dp"
                 android:backgroundTint="@color/bdRed"
                 android:text="SCAN QR-CODE"
                 android:textAlignment="center"
@@ -77,9 +77,9 @@
                 android:id="@+id/tvChangeComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/bScan"
+                android:layout_above="@id/ivFooter"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="29dp"
                 android:text="Adjust Standard Comments?"
                 android:textColor="@color/bdRed"
                 android:textStyle="italic" />
@@ -88,9 +88,10 @@
                 android:id="@+id/tvTotalScans"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvStandard"
+                android:layout_below="@+id/tvRecent3"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="@dimen/halfFieldSpacing"
+                android:layout_marginTop="22dp"
+
                 android:text="TOTAL SCANS: X"
                 android:textAlignment="center"
                 android:textColor="@color/bdRed"
@@ -101,9 +102,10 @@
                 android:id="@+id/tvRecent1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvTotalScans"
+                android:layout_below="@+id/tvRecent"
                 android:layout_centerHorizontal="true"
                 android:text="Student 1"
+                android:layout_marginTop="10dp"
                 android:textAlignment="center"
                 android:textColor="@color/pureBlack" />
 
@@ -128,6 +130,23 @@
                 android:text="Student 3"
                 android:textAlignment="center"
                 android:textColor="@color/pureBlack" />
+
+            <ImageView
+                android:id="@+id/ivFooter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="0dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="Footer"
+                android:padding="0dp"
+                android:scaleType="fitEnd"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/banner" />
 
         </RelativeLayout>
 
@@ -156,21 +175,7 @@
             android:text="Log out"
             android:textAlignment="textEnd"
             android:textColor="@color/bdLightBlue" />
-    </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/ivFooter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/rlWrapper"
-        android:adjustViewBounds="true"
-        android:contentDescription="Footer"
-        android:padding="0dp"
-        android:scaleType="fitEnd"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/banner" />
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

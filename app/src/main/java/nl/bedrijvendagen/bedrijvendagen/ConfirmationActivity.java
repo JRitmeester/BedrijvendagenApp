@@ -40,7 +40,7 @@ public class ConfirmationActivity extends AppCompatActivity {
                     public void run() {
                         startTimer();
                     }
-                }, 1000);
+                }, 500);
             }
         });
     }
@@ -90,8 +90,11 @@ public class ConfirmationActivity extends AppCompatActivity {
     private void conclude() {
         // When clicked anywhere, reset the timer and go to home screen.
         Intent homeIntent = new Intent(ConfirmationActivity.this, HomeActivity.class);
+        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        countDownTimer.cancel();
         startActivity(homeIntent);
-        resetTimer();
-        finish();
+
+//        resetTimer();
+//        finish();
     }
 }

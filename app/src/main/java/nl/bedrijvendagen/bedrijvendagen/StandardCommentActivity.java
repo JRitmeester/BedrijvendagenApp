@@ -30,6 +30,7 @@ import java.util.HashMap;
 
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
+import static nl.bedrijvendagen.bedrijvendagen.ToastWrapper.createToast;
 
 public class StandardCommentActivity extends AppCompatActivity {
 
@@ -63,7 +64,7 @@ public class StandardCommentActivity extends AppCompatActivity {
 
     private void initViews() {
         tvSkip = findViewById(R.id.tvSkip);
-        tvStandard = findViewById(R.id.tvStandard);
+        tvStandard = findViewById(R.id.tvRecent);
         bSave = findViewById(R.id.bSave);
         etComment1 = findViewById(R.id.etComment1);
         etComment2 = findViewById(R.id.etComment2);
@@ -74,6 +75,10 @@ public class StandardCommentActivity extends AppCompatActivity {
 
         tvCompany = findViewById(R.id.tvCompany);
         tvCompany.setText(CompanyCredentials.company);
+
+        etComment1.setText(TextFileHandler.read(this, "standardComment1.txt"));
+        etComment2.setText(TextFileHandler.read(this, "standardComment2.txt"));
+        etComment3.setText(TextFileHandler.read(this, "standardComment3.txt"));
     }
 
     private void initListeners() {
@@ -153,13 +158,19 @@ public class StandardCommentActivity extends AppCompatActivity {
 
         if (standardComments[0] != null) {
             TextFileHandler.write(this, "standardComment1.txt", standardComments[0]);
+            Log.d("READING WRITTEN TEXT", "Found " + TextFileHandler.read(this, "standardComment1.txt"));
         }
         if (standardComments[1] != null) {
             TextFileHandler.write(this, "standardComment2.txt", standardComments[1]);
+            Log.d("READING WRITTEN TEXT", "Found " + TextFileHandler.read(this, "standardComment2.txt"));
         }
         if (standardComments[2] != null) {
-            TextFileHandler.write(this, "standardComment1.txt", standardComments[2]);
+            TextFileHandler.write(this, "standardComment3.txt", standardComments[2]);
+            Log.d("READING WRITTEN TEXT", "Found " + TextFileHandler.read(this,  "standardComment3.txt"));
         }
+        Intent homeIntent = new Intent(StandardCommentActivity.this, HomeActivity.class);
+        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(homeIntent);
     }
 
     public void logout() {
@@ -187,7 +198,7 @@ public class StandardCommentActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(StandardCommentActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                createToast(error.getMessage(), Toast.LENGTH_LONG, StandardCommentActivity.this);
             }
         }) {
             @Override

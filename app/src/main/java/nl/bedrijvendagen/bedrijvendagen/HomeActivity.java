@@ -27,6 +27,7 @@ import java.util.HashMap;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company;
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
+import static nl.bedrijvendagen.bedrijvendagen.ToastWrapper.createToast;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -51,6 +52,7 @@ public class HomeActivity extends AppCompatActivity {
     private String[] names = new String[3];
     private String[] ids = new String[3];
     private String[] comments = new String[3];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +70,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         // Pull the last three scanned visitors and set company name in top left.
         // Also gets called when the activity is first launched.
-        Refresher.refresh(this);
+//        Refresher.refresh(this);
         updateCount();
         updateNames();
         StudentCredentials.reset();
@@ -94,7 +96,7 @@ public class HomeActivity extends AppCompatActivity {
     private void initViews() {
         tvLogout = findViewById(R.id.tvLogout);
         tvCompany = findViewById(R.id.tvCompany);
-        tvRecently = findViewById(R.id.tvStandard);
+        tvRecently = findViewById(R.id.tvRecent);
         tvTotal = findViewById(R.id.tvTotalScans);
         bScanQR = findViewById(R.id.bScan);
 
@@ -107,7 +109,7 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("SETTING COMPANY", company);
         tvCompany.setText(CompanyCredentials.company);
 
-        // Set underline for tvLostPassword
+        // Set underline for tvChangeComments
         tvChangeComments.setPaintFlags(tvChangeComments.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
     }
@@ -178,7 +180,9 @@ public class HomeActivity extends AppCompatActivity {
         tvChangeComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Make intent to go to standardCommentActivity.
+                Intent changeCommentsIntent = new Intent(HomeActivity.this, StandardCommentActivity.class);
+                startActivity(changeCommentsIntent);
+
             }
         });
     }
@@ -221,7 +225,7 @@ public class HomeActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                createToast(error.getMessage(), Toast.LENGTH_LONG, HomeActivity.this);
             }
         }) {
             @Override
@@ -245,24 +249,20 @@ public class HomeActivity extends AppCompatActivity {
         StringRequest nameRequest = new StringRequest(Request.Method.GET, namesUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("NAMES", response);
+                Log.d("RESPONSE", response);
                 JSONArray jArr;
                 try {
                     jArr = new JSONArray(response);
 
                     //TODO: Test global instance of names (String[]).
 //                    String[] names = new String[3];
-                    for (int i = 0; i < (count < 3 ? count : 3); i++) {
+                    for (int i = 0; i < Math.min(count, 3); i++) {
                         names[i] = jArr.getJSONObject(i).getString("name");
+                        Log.d("NAMES", "Found name and stored " + names[i]);
                         ids[i] = jArr.getJSONObject(i).getString("id");
                         comments[i] = jArr.getJSONObject(i).getString("comments");
                     }
 
-                    for (int i = 0; i < 3; i++) {
-                        names[i] = (names[i].equals("null") || names[i] == null) ? "No name available" : names[i];
-                        ids[i] = (ids[i] == "null") ? "Manual entry" : ids[i];
-                        comments[i] = comments[i].equals("null") ? "Manual entry" : comments[i];
-                    }
                     Log.d("NAMES (PARSED)", names[0] + ", " + names[1] + ", " + names[2]);
                     if (names[0] != null) tvRecent1.setText(names[0]);
                     if (names[1] != null) tvRecent2.setText(names[1]);
@@ -275,7 +275,7 @@ public class HomeActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                createToast(error.getMessage(), Toast.LENGTH_LONG, HomeActivity.this);
             }
         }) {
             @Override
@@ -316,7 +316,7 @@ public class HomeActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_LONG);
+                createToast(error.getMessage(), Toast.LENGTH_LONG, HomeActivity.this);
             }
         }) {
             @Override

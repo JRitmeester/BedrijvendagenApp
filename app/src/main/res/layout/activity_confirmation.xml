@@ -6,21 +6,6 @@
     android:layout_height="match_parent"
     tools:context="nl.bedrijvendagen.bedrijvendagen.ConfirmationActivity">
 
-    <ImageView
-        android:id="@+id/ivBubbles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="false"
-        android:contentDescription="Bubble background"
-        android:cropToPadding="false"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/ivFooter"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/bubbles" />
-
     <RelativeLayout
         android:id="@+id/rlWrapper"
         android:layout_width="0dp"

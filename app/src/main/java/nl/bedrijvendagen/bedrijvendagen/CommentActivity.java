@@ -40,35 +40,18 @@ public class CommentActivity extends AppCompatActivity {
     private Button bComment2;
     private Button bComment3;
 
+    private final int MAX_COMMENT_LENGTH = 20;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
 
-        Intent intent = getIntent();
-        overwriting = intent.getExtras().getBoolean("isOverwriting");
+        overwriting = getIntent().getExtras().getBoolean("isOverwriting");
         Log.d("Overwriting?", String.valueOf(overwriting));
 
-//        readStandardComments();
         initViews();
         initListeners();
         setFont();
-
-        if (overwriting) {
-////            if (intent.hasExtra("name")) {
-//            parsedName = intent.getStringExtra("name");
-////            }
-////            if (intent.hasExtra("id")) {
-//            parsedId = intent.getStringExtra("id");
-//            Log.d("PARSEDID", parsedId);
-////            }
-//
-////            if (intent.hasExtra("comment")) {
-//            parsedComment = intent.getStringExtra("comment");
-////            }
-//            Log.d("PARSED FROM HOME:", parsedName + ", " + parsedId + ", " + parsedComment);
-
-        }
     }
 
     private void initViews() {
@@ -86,13 +69,13 @@ public class CommentActivity extends AppCompatActivity {
         standardComment2 = TextFileHandler.read(CommentActivity.this, "standardComment2.txt");
         standardComment3 = TextFileHandler.read(CommentActivity.this, "standardComment3.txt");
 
-        bComment1.setText(standardComment1);
-        bComment2.setText(standardComment2);
-        bComment3.setText(standardComment3);
+        bComment1.setText(ellipsis(standardComment1, MAX_COMMENT_LENGTH));
+        bComment2.setText(ellipsis(standardComment2, MAX_COMMENT_LENGTH));
+        bComment3.setText(ellipsis(standardComment3, MAX_COMMENT_LENGTH));
 
 //        Log.d("Status", overwriting ? "Overwriting..." : "New entry being created.");
-        Intent intent = getIntent();
-        overwriting = intent.getExtras().getBoolean("isOverwriting");
+//        Intent intent = getIntent();
+//        overwriting = intent.getExtras().getBoolean("isOverwriting");
 
         if (overwriting) {
 //            firstName = parsedName;
@@ -101,7 +84,7 @@ public class CommentActivity extends AppCompatActivity {
 //            parsedId = parsedId.replaceAll("\\D+", "");
 //            userID = Integer.valueOf(parsedId);
 //            etCommentField.setHint(parsedComment);
-            etCommentField.setHint(comment);
+            etCommentField.setHint(comment == "null" ? "" : comment);
         }
         if (!firstName.equals("default") && !lastName.equals("default")) {
             if (!overwriting) {
@@ -124,8 +107,30 @@ public class CommentActivity extends AppCompatActivity {
                 }
                 Intent loadIntent = new Intent(CommentActivity.this, LoadActivity.class);
                 loadIntent.putExtra("overwriting", overwriting);
+                loadIntent.putExtra("hasFailedBefore", false);
                 startActivity(loadIntent);
                 finish();
+            }
+        });
+
+        bComment1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etCommentField.setText(etCommentField.getText().toString() + standardComment1 + " ");
+            }
+        });
+
+        bComment2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etCommentField.setText(etCommentField.getText().toString() + standardComment2 + " ");
+            }
+        });
+
+        bComment3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etCommentField.setText(etCommentField.getText().toString() + standardComment3 + " ");
             }
         });
     }
@@ -172,5 +177,13 @@ public class CommentActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    private String ellipsis(String text, int length) {
+        if (text.length() > length) {
+            return text.substring(0, length - 3) + "...";
+        }
+        return text;
+
     }
 }

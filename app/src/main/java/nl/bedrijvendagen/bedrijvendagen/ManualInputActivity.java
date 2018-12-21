@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +21,7 @@ import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.email;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.firstName;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.hasEmail;
 import static nl.bedrijvendagen.bedrijvendagen.StudentCredentials.lastName;
+import static nl.bedrijvendagen.bedrijvendagen.ToastWrapper.createToast;
 
 public class ManualInputActivity extends AppCompatActivity {
 
@@ -25,6 +29,8 @@ public class ManualInputActivity extends AppCompatActivity {
     private TextView tvLastName;
     private EditText etEmail;
     private Button bSaveEntry;
+    private ImageView ivLogo;
+    private View filler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,7 @@ public class ManualInputActivity extends AppCompatActivity {
         initViews();
         initListeners();
         setFont();
+        initLogoVisibilityChange();
     }
 
     @Override
@@ -65,24 +72,38 @@ public class ManualInputActivity extends AppCompatActivity {
         tvLastName = findViewById(R.id.etLastName);
         etEmail = findViewById(R.id.etEmail);
         bSaveEntry = findViewById(R.id.bSaveEntry);
+        ivLogo = findViewById(R.id.ivBDLogo);
+        filler = findViewById(R.id.filler);
     }
 
     private void initListeners() {
         bSaveEntry.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View view) {
-                String email = etEmail.getText().toString();
-                if (!email.contains("@") || !email.contains(".")) {
-                    Toast.makeText(ManualInputActivity.this, "Please enter a valid email address.", Toast.LENGTH_LONG).show();
+
+                String firstName = tvFirstName.getText().toString();
+                String lastName = tvLastName.getText().toString();
+
+                if (firstName.isEmpty() || lastName.isEmpty()) {
+
                 } else {
-                    firstName = tvFirstName.getText().toString();
-                    lastName = tvLastName.getText().toString();
-                    StudentCredentials.email = email;
-                    hasEmail = true;
-                    Intent commentIntent = new Intent(ManualInputActivity.this, CommentActivity.class);
-                    commentIntent.putExtra("isOverwriting", false);
-                    startActivity(commentIntent);
-                    finish();
+
+                    String email = etEmail.getText().toString();
+                    if (!email.contains("@") || !email.contains(".")) {
+                        createToast("Please enter a valid email address.", Toast.LENGTH_LONG, ManualInputActivity.this);
+                    } else {
+                        StudentCredentials.firstName = tvFirstName.getText().toString();
+                        StudentCredentials.lastName = tvLastName.getText().toString();
+                        StudentCredentials.email = email;
+                        hasEmail = true;
+                        Intent commentIntent = new Intent(ManualInputActivity.this, CommentActivity.class);
+                        commentIntent.putExtra("isOverwriting", false);
+                        startActivity(commentIntent);
+                        finish();
+
+                    }
                 }
             }
         });
@@ -92,6 +113,39 @@ public class ManualInputActivity extends AppCompatActivity {
         setTypeface(this, tvFirstName);
         setTypeface(this, tvLastName);
         setTypeface(this, etEmail);
+    }
+
+    private void initLogoVisibilityChange() {
+        findViewById(android.R.id.content).getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                Rect r = new Rect();
+                findViewById(android.R.id.content).getWindowVisibleDisplayFrame(r);
+                int screenHeight = findViewById(android.R.id.content).getRootView().getHeight();
+
+                // r.bottom is the position above soft keypad or device button.
+                // If keypad is shown, the r.bottom is smaller than that before.
+                int keypadHeight = screenHeight - r.bottom;
+
+                Log.d("KEYBOARD", "keypadHeight = " + keypadHeight);
+
+                try {
+                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                        ivLogo.setVisibility(View.GONE);
+                        filler.setVisibility(View.VISIBLE);
+                        Log.d("LOGO", "Invisible");
+                    } else {
+                        ivLogo.setVisibility(View.VISIBLE);
+                        Log.d("LOGO", "Visible");
+                        filler.setVisibility(View.GONE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 
     @Override

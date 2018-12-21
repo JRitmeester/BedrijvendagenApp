@@ -44,7 +44,7 @@
             android:layout_marginRight="@dimen/sideMargin">
 
             <TextView
-                android:id="@+id/tvStandard"
+                android:id="@+id/tvRecent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -61,7 +61,7 @@
                 android:id="@+id/etComment1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvStandard"
+                android:layout_below="@+id/tvRecent"
                 android:layout_centerHorizontal="true"
                 android:hint="Comment 1: max 20 characters"
                 android:textAlignment="center"
@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/etComment3"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:backgroundTint="@color/bdRed"
                 android:text="SAVE"
                 android:textAlignment="center"

@@ -1,6 +1,7 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static android.content.Context.MODE_PRIVATE;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company_id;
@@ -31,10 +33,11 @@ public class Refresher {
     private static RequestQueue queue_;
     private static String update_url = "https://www.bedrijvendagentwente.nl/auth/api/accounts/session/";
 
-    public static void refresh(Context c) {
+    public static void refresh(final Context c) {
+
         queue_ = Volley.newRequestQueue(c);
         Log.d("REFHRESHING", "Refreshing session...");
-        StringRequest loginRequest = new StringRequest(Request.Method.POST, update_url, new Response.Listener<String>() {
+        StringRequest loginRequest = new StringRequest(Request.Method.PUT, update_url, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
@@ -56,7 +59,6 @@ public class Refresher {
                     Log.d("REFRESHER", "Refreshed current session");
                     try {
                         token = jObj.getString("_csrf");
-                        auth = true;
                         company_id = Integer.parseInt(jObj.getString("id"));
                         company = jObj.getString("company_name");
                         email = jObj.getString("email");
@@ -87,7 +89,8 @@ public class Refresher {
             public byte[] getBody() throws AuthFailureError {
                 Map<String, Object> params = new LinkedHashMap<>();
                 params.put("email", CompanyCredentials.email);
-                params.put("password", password);
+                params.put("password", CompanyCredentials.getPassword(c));
+                params.put("hash_password", false);
                 return new JSONObject(params).toString().getBytes();
             }
 

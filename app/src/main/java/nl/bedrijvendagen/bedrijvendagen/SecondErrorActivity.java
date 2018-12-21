@@ -35,6 +35,7 @@ public class SecondErrorActivity extends AppCompatActivity {
                 Intent homeIntent = new Intent(SecondErrorActivity.this, HomeActivity.class);
                 startActivity(homeIntent);
                 StudentCredentials.reset();
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 finish();
             }
         });

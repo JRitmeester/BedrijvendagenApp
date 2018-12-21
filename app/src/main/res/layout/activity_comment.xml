@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context="nl.bedrijvendagen.bedrijvendagen.CommentActivity">
 
-    <ImageView
-        android:id="@+id/ivBubbles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="false"
-        android:contentDescription="Bubble background"
-        android:cropToPadding="false"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:srcCompat="@drawable/bubbles" />
-
     <RelativeLayout
         android:id="@+id/rlWrapper"
         android:layout_width="0dp"
@@ -84,7 +73,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:backgroundTint="@color/bdRed"
-                android:text="SAVE"
+                android:text="Standard Comment 1"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
             <!--android:layout_below="@id/etCommentField"-->
@@ -98,7 +87,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:backgroundTint="@color/bdRed"
-                android:text="SAVE"
+                android:text="Standard Comment 2"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
@@ -110,7 +99,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:backgroundTint="@color/bdRed"
-                android:text="SAVE"
+                android:text="Standard Comment 3"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 

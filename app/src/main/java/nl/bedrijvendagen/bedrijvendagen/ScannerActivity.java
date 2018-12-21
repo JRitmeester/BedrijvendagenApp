@@ -83,7 +83,7 @@ public class ScannerActivity extends AppCompatActivity {
 //                    }
                     if (ContextCompat.checkSelfPermission(ScannerActivity.this,
                             Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
+                            != PackageManager.PERMISSION_GRANTED) {
 
                         // Permission is not granted
                         // Should we show an explanation?
@@ -204,7 +204,7 @@ public class ScannerActivity extends AppCompatActivity {
     private void requestPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,

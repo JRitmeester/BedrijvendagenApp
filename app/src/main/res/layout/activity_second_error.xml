@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context="nl.bedrijvendagen.bedrijvendagen.SecondErrorActivity">
 
-    <ImageView
-        android:id="@+id/ivBubbles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="false"
-        android:contentDescription="Bubble background"
-        android:cropToPadding="false"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:srcCompat="@drawable/bubbles" />
-
     <RelativeLayout
         android:id="@+id/rlWrapper"
         android:layout_width="0dp"

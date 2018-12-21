@@ -1,6 +1,5 @@
 package nl.bedrijvendagen.bedrijvendagen;
 
-import android.accounts.AccountAuthenticatorActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +12,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,14 +35,9 @@ import org.json.JSONObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.auth;
-import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company;
-import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.company_id;
 import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.email;
-import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.password;
-import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.password_raw;
-import static nl.bedrijvendagen.bedrijvendagen.CompanyCredentials.token;
 import static nl.bedrijvendagen.bedrijvendagen.Frutiger.setTypeface;
+import static nl.bedrijvendagen.bedrijvendagen.ToastWrapper.createToast;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -57,6 +53,11 @@ public class LoginActivity extends AppCompatActivity {
     private String lostPasswordUrl = "https://bedrijvendagentwente.nl/auth/front/accounts/lostPassword/";
 
     private RequestQueue queue;
+    private boolean loginIsCached = false;
+
+    private String cachedUsername;
+    private String cachedPassword;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +71,15 @@ public class LoginActivity extends AppCompatActivity {
 
         // Store the login credentials (hashed pasword).
         SharedPreferences sp = getSharedPreferences("Login", MODE_PRIVATE);
-        String cachedUsername = sp.getString("USERNAME", "");
-//        String cachedPassword = sp.getString("PASSWORD", "");
-        etEmail.setText(cachedUsername);
-        etPassword.setText("xxxxxxxx"); // 8 filler characters to show that the password was stored.
-
+//        cachedUsername = sp.getString("USERNAME", "");
+//        cachedPassword = sp.getString("PASSWORD", "");
+//        if (!cachedUsername.equals("") && !cachedPassword.equals("")) {
+//            loginIsCached = true;
+//            etEmail.setText(cachedUsername);
+//            etPassword.setText(cachedPassword);
+//        }
+        etEmail.setText(CompanyCredentials.getUsername(LoginActivity.this));
+        etPassword.setText(CompanyCredentials.getPassword(LoginActivity.this));
     }
 
     private void initViews() {
@@ -123,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                         ivLogo.setVisibility(View.GONE);
                         filler.setVisibility(View.VISIBLE);
                         Log.d("LOGO", "Invisible");
+
                     } else {
                         ivLogo.setVisibility(View.VISIBLE);
                         Log.d("LOGO", "Visible");
@@ -145,12 +151,6 @@ public class LoginActivity extends AppCompatActivity {
     private void login() {
         queue = Volley.newRequestQueue(this);
 
-//        final String email_ = etEmail.getText().toString();
-//        final String password_ = etPassword.getText().toString();
-
-        final String email_ = "j.c.ritmeester@student.utwente.nl";
-        final String password_ = "ApptestJeroen";
-
         StringRequest loginRequest = new StringRequest(Request.Method.POST, loginUrl, new Response.Listener<String>() {
 
             @Override
@@ -172,20 +172,16 @@ public class LoginActivity extends AppCompatActivity {
                 if (authorised) {
                     Log.d("LOGIN", "Authorised. Processing response...");
                     try {
-                        token = jObj.getString("_csrf");
-                        auth = true;
-                        company_id = Integer.parseInt(jObj.getString("id"));
+                        CompanyCredentials.token = jObj.getString("_csrf");
+                        CompanyCredentials.company_id = Integer.parseInt(jObj.getString("id"));
+                        CompanyCredentials.company = jObj.getString("company_name");
+                        CompanyCredentials.email = jObj.getString("email");
 
-                        company = jObj.getString("company_name");
-                        Log.d("Company", company);
-                        email = jObj.getString("email");
-                        password = SHA1.hash(password_);
-//                        Log.d("Password", password);
-
+                        Log.d("CURRENTLY", etPassword.getText().toString());
                         SharedPreferences settings = getSharedPreferences("Login", MODE_PRIVATE);
                         settings.edit()
                                 .putString("USERNAME", email)
-                                .putString("PASSWORD", password)
+                                .putString("PASSWORD", etPassword.getText().toString())
                                 .apply();
 
                         Intent standardCommentIntent = new Intent(LoginActivity.this, StandardCommentActivity.class);
@@ -201,7 +197,8 @@ public class LoginActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(LoginActivity.this, "Invalid login", Toast.LENGTH_LONG).show();
+//                Toast.makeText(LoginActivity.this, "Invalid login", Toast.LENGTH_LONG).show();
+                createToast("Invalid login", Toast.LENGTH_LONG, LoginActivity.this);
                 tvLogin.setText("INVALID LOGIN");
             }
         }) {
@@ -216,8 +213,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 Map<String, Object> params = new LinkedHashMap<>();
-                params.put("email", email_);
-                params.put("password", SHA1.hash(password_));
+                if (loginIsCached) {
+                    Log.d("Cache","Login is cached.");
+                    params.put("email", CompanyCredentials.getUsername(LoginActivity.this));
+                    params.put("password", CompanyCredentials.getPassword(LoginActivity.this));
+                } else {
+                    Log.d("Cache","Login is NOT cached.");
+                    params.put("email", etEmail.getText().toString());
+                    params.put("password", SHA1.hash(etPassword.getText().toString()));
+                }
                 return new JSONObject(params).toString().getBytes();
             }
 
@@ -228,6 +232,7 @@ public class LoginActivity extends AppCompatActivity {
         };
         queue.add(loginRequest);
     }
+
 
     private void setFont() {
         setTypeface(this, etEmail);
