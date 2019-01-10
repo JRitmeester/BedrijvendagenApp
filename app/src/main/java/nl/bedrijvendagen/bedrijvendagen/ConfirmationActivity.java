@@ -91,7 +91,9 @@ public class ConfirmationActivity extends AppCompatActivity {
         // When clicked anywhere, reset the timer and go to home screen.
         Intent homeIntent = new Intent(ConfirmationActivity.this, HomeActivity.class);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        countDownTimer.cancel();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         startActivity(homeIntent);
 
 //        resetTimer();

@@ -42,7 +42,7 @@ public class LoadActivity extends AppCompatActivity {
 
     private boolean overwriting;
     private boolean hasFailedBefore;
-
+    private boolean isComplete = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +76,7 @@ public class LoadActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                goToError();
+                if (!isComplete) goToError();
             }
         }.start();
         super.onResume();
@@ -94,37 +94,36 @@ public class LoadActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 // Stop waiting for the response to come through... because, well... it's here.
-                countdown.cancel();
+
                 Log.d("LOGIN", response);
                 JSONObject jObj = null;
-                boolean valid = false;
 
                 try {
                     jObj = new JSONObject(response);
-                    valid = Boolean.valueOf(jObj.getString("valid"));
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Log.d("SUBMIT", e.getMessage());
                     goToError();
+
                 }
                 try {
                     // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
-                    if (valid) {
+                        countdown.cancel();
                         StudentCredentials.reset();
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
                         startActivity(confirmIntent);
                         finish();
-                    } else {
-                        goToError();
-                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     goToError();
+                    Log.d("SUBMIT", e.getMessage());
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 createToast("HTTP Error code: " + String.valueOf(error.networkResponse.statusCode), Toast.LENGTH_LONG,LoadActivity.this);
+                Log.d("SUBMIT", error.getMessage());
                 goToError();
             }
         }) {
@@ -168,38 +167,37 @@ public class LoadActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         String overwriteUrl = submitUrl + userID;
-        Log.d("UPLOAD", "Attempting to overwrite...");
+        Log.d("OVERWRITE", "Attempting to overwrite...");
         StringRequest submitRequest = new StringRequest(Request.Method.PUT, overwriteUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 countdown.cancel();
-                Log.d("LOGIN", response);
+                Log.d("OVERWRITE RESPONSE", response);
                 JSONObject jObj = null;
                 boolean success = false;
                 try {
                     jObj = new JSONObject(response);
-                    success = comment.equals(jObj.getString("comments"));
-                    if (!success) {
-                        throw new Exception();
-                    }
+                    //TODO: FIND BETTER WAY TO EVALUATE IF IT WAS A SUCCESS.
+//                    success = comment.equals(jObj.getString("comments"));
+//                    if (!success) {
+//                        throw new Exception("");
+//                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     goToError();
+                    Log.d("OVERWRITE 1", e.getMessage());
                 }
                 try {
-                    // Quite crude check; JSON response should contain a key named "created: <date> <time>". If this is not found, the response was not a successful one.
-                    if (success) {
                         StudentCredentials.reset();
+                        isComplete = true;
                         Intent confirmIntent = new Intent(LoadActivity.this, ConfirmationActivity.class);
                         startActivity(confirmIntent);
                         finish();
-                    }
-                   else {
-                        goToError();
-                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     goToError();
+                    Log.d("OVERWRITE 2", e.getMessage());
                 }
             }
         }, new Response.ErrorListener() {
@@ -207,8 +205,10 @@ public class LoadActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 createToast("HTTP Error code: " + String.valueOf(error.networkResponse.statusCode), Toast.LENGTH_LONG,LoadActivity.this);
                 goToError();
+                Log.d("OVERWRITE VOLLEY", error.getMessage());
             }
         }) {
+
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new LinkedHashMap<>();

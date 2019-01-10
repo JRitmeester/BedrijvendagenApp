@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,8 +19,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
+import com.google.android.gms.samples.vision.barcodereader.MainActivity;
+import com.google.android.gms.vision.barcode.Barcode;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -45,10 +50,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private TextView tvRecent1;
     private TextView tvRecent2;
+    private TextView tvRecent3;
+
+    private RelativeLayout rlWrapperRecent1;
+    private RelativeLayout rlWrapperRecent2;
+    private RelativeLayout rlWrapperRecent3;
 
     private int count;
 
-    private TextView tvRecent3;
     private String[] names = new String[3];
     private String[] ids = new String[3];
     private String[] comments = new String[3];
@@ -72,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
         // Also gets called when the activity is first launched.
 //        Refresher.refresh(this);
         updateCount();
-        updateNames();
+//        updateNames();
         StudentCredentials.reset();
     }
 
@@ -104,6 +113,10 @@ public class HomeActivity extends AppCompatActivity {
         tvRecent2 = findViewById(R.id.tvRecent2);
         tvRecent3 = findViewById(R.id.tvRecent3);
 
+        rlWrapperRecent1 = findViewById(R.id.rlWrapperRecent1);
+        rlWrapperRecent2 = findViewById(R.id.rlWrapperRecent2);
+        rlWrapperRecent3 = findViewById(R.id.rlWrapperRecent3);
+
         tvChangeComments = findViewById(R.id.tvChangeComments);
 
         Log.d("SETTING COMPANY", company);
@@ -125,19 +138,16 @@ public class HomeActivity extends AppCompatActivity {
         bScanQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent scanIntent = new Intent(HomeActivity.this, ScannerActivity.class);
+//                Intent scanIntent = new Intent(HomeActivity.this, ScannerActivity.class);
+                Intent scanIntent = new Intent(HomeActivity.this, BarcodeCaptureActivity.class);
                 startActivity(scanIntent);
             }
         });
 
-        tvRecent1.setOnClickListener(new View.OnClickListener() {
+        rlWrapperRecent1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Open comment view with name. Parse ID to comment activity I guess
                 Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
-//                commentIntent.putExtra("name", names[0]);
-//                commentIntent.putExtra("comment", comments[0]);
-//                commentIntent.putExtra("id", ids[0]);
                 commentIntent.putExtra("isOverwriting", true);
                 StudentCredentials.firstName = names[0];
                 StudentCredentials.comment = comments[0];
@@ -145,14 +155,11 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(commentIntent);
             }
         });
-        tvRecent2.setOnClickListener(new View.OnClickListener() {
+
+        rlWrapperRecent2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Open comment view with name. Parse ID to comment activity I guess
                 Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
-//                commentIntent.putExtra("name", names[1]);
-//                commentIntent.putExtra("comment", comments[1]);
-//                commentIntent.putExtra("id", ids[1]);
                 StudentCredentials.firstName = names[1];
                 StudentCredentials.comment = comments[1];
                 StudentCredentials.userID = Integer.parseInt(ids[1]);
@@ -160,14 +167,11 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(commentIntent);
             }
         });
-        tvRecent3.setOnClickListener(new View.OnClickListener() {
+
+        rlWrapperRecent3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Open comment view with name. Parse ID to comment activity I guess
                 Intent commentIntent = new Intent(HomeActivity.this, CommentActivity.class);
-//                commentIntent.putExtra("name", names[2]);
-//                commentIntent.putExtra("comment", comments[2]);
-//                commentIntent.putExtra("id", ids[2]);
                 StudentCredentials.firstName = names[2];
                 StudentCredentials.comment = comments[2];
                 StudentCredentials.userID = Integer.parseInt(ids[2]);
@@ -257,10 +261,14 @@ public class HomeActivity extends AppCompatActivity {
                     //TODO: Test global instance of names (String[]).
 //                    String[] names = new String[3];
                     for (int i = 0; i < Math.min(count, 3); i++) {
-                        names[i] = jArr.getJSONObject(i).getString("name");
-                        Log.d("NAMES", "Found name and stored " + names[i]);
-                        ids[i] = jArr.getJSONObject(i).getString("id");
-                        comments[i] = jArr.getJSONObject(i).getString("comments");
+                        try {
+                            names[i] = jArr.getJSONObject(i).getString("name");
+                            Log.d("NAMES", "Found name and stored " + names[i]);
+                            ids[i] = jArr.getJSONObject(i).getString("id");
+                            comments[i] = jArr.getJSONObject(i).getString("comments");
+                        } catch (JSONException e) {
+                            Log.e("PARSING NAMES", e.getMessage());
+                        }
                     }
 
                     Log.d("NAMES (PARSED)", names[0] + ", " + names[1] + ", " + names[2]);
@@ -306,8 +314,11 @@ public class HomeActivity extends AppCompatActivity {
                     jObj = new JSONObject(response);
                     String countTitle = "Total scanned: ";
                     count = Integer.parseInt(jObj.getString("count"));
+                    Log.d("COUNT!!!", jObj.getString("count"));
                     countTitle += count;
                     tvTotal.setText(countTitle);
+
+                    updateNames();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("error", e.getMessage());

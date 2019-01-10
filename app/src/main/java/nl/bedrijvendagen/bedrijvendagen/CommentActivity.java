@@ -99,8 +99,11 @@ public class CommentActivity extends AppCompatActivity {
         bSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Saving...", "Saving...");
-                comment = etCommentField.getText().toString();
+                Log.d("COMMENT", "Saving...");
+                String commentFieldText = etCommentField.getText().toString();
+                if (!(overwriting && commentFieldText.isEmpty())) {
+                    comment = commentFieldText;
+                }
                 // Remove any entries that are the hinted text.
                 if (comment.equals("Add comment...")) {
                     comment = "";

@@ -71,16 +71,6 @@ public class ScannerActivity extends AppCompatActivity {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 requestPermission();
                 try {
-//                    if (ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//                        // TODO: Consider calling
-//                        //    ActivityCompat#requestPermissions
-//                        // here to request the missing permissions, and then overriding
-//                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                        //                                          int[] grantResults)
-//                        // to handle the case where the user grants the permission. See the documentation
-//                        // for ActivityCompat#requestPermissions for more details.
-//                        return;
-//                    }
                     if (ContextCompat.checkSelfPermission(ScannerActivity.this,
                             Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
@@ -183,7 +173,7 @@ public class ScannerActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         StudentCredentials.reset();
-        Refresher.refresh(this);
+//        Refresher.refresh(this);
         super.onResume();
     }
 
@@ -261,54 +251,5 @@ public class ScannerActivity extends AppCompatActivity {
                 startActivity(manualInputIntent);
             }
         });
-    }
-
-    private Size getOptimalSize(List<Size> sizes, int w, int h) {
-
-        final double ASPECT_TOLERANCE = 0.2;
-        double targetRatio = (double) w / h;
-        if (sizes == null)
-            return null;
-        Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-        int targetHeight = h;
-        // Try to find an size match aspect ratio and size
-        for (Size size : sizes) {
-//          Log.d("CameraActivity", "Checking size " + size.width + "w " + size.height + "h");
-            double ratio = (double) size.getWidth() / size.getHeight();
-            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
-                continue;
-            if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.getHeight() - targetHeight);
-            }
-        }
-        // Cannot find the one match the aspect ratio, ignore the requirement
-
-        if (optimalSize == null) {
-            minDiff = Double.MAX_VALUE;
-            for (Size size : sizes) {
-                if (Math.abs(size.getHeight() - targetHeight) < minDiff) {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.getHeight() - targetHeight);
-                }
-            }
-        }
-
-        SharedPreferences previewSizePref;
-//        if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
-        previewSizePref = getSharedPreferences("PREVIEW_PREF", MODE_PRIVATE);
-//        } else {
-//            previewSizePref = getSharedPreferences("FRONT_PREVIEW_PREF",MODE_PRIVATE);
-//        }
-
-        SharedPreferences.Editor prefEditor = previewSizePref.edit();
-        prefEditor.putInt("width", optimalSize.getWidth());
-        prefEditor.putInt("height", optimalSize.getHeight());
-
-        prefEditor.apply();
-
-//      Log.d("CameraActivity", "Using size: " + optimalSize.width + "w " + optimalSize.height + "h");
-        return optimalSize;
     }
 }

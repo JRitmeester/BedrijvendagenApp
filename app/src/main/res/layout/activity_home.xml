@@ -60,6 +60,104 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
+            <RelativeLayout
+                android:id="@+id/rlWrapperRecent1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvRecent"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/recentNameSpacing">
+
+                <TextView
+                    android:id="@+id/tvRecent1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loading..."
+                    android:textAlignment="center"
+                    android:textColor="@color/pureBlack"
+                    android:textSize="@dimen/commonTextSize" />
+
+                <ImageView
+                    android:id="@+id/ivButton1"
+                    android:layout_width="@dimen/commonTextSize"
+                    android:layout_height="@dimen/commonTextSize"
+                    android:layout_alignTop="@+id/tvRecent1"
+                    android:layout_alignBottom="@+id/tvRecent1"
+                    android:layout_marginLeft="@dimen/halfFieldSpacing"
+                    android:layout_toEndOf="@+id/tvRecent1"
+                    app:srcCompat="@drawable/knop" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlWrapperRecent2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rlWrapperRecent1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/recentNameSpacing">
+
+                <TextView
+                    android:id="@+id/tvRecent2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loading..."
+                    android:textAlignment="center"
+                    android:textColor="@color/pureBlack"
+                    android:textSize="@dimen/commonTextSize" />
+
+                <ImageView
+                    android:id="@+id/ivButton2"
+                    android:layout_width="@dimen/commonTextSize"
+                    android:layout_height="@dimen/commonTextSize"
+                    android:layout_alignTop="@+id/tvRecent2"
+                    android:layout_alignBottom="@+id/tvRecent2"
+                    android:layout_marginLeft="@dimen/halfFieldSpacing"
+                    android:layout_toEndOf="@+id/tvRecent2"
+                    app:srcCompat="@drawable/knop" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlWrapperRecent3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rlWrapperRecent2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/recentNameSpacing">
+
+                <TextView
+                    android:id="@+id/tvRecent3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loading..."
+                    android:textAlignment="center"
+                    android:textColor="@color/pureBlack"
+                    android:textSize="@dimen/commonTextSize" />
+
+                <ImageView
+                    android:id="@+id/ivButton3"
+                    android:layout_width="@dimen/commonTextSize"
+                    android:layout_height="@dimen/commonTextSize"
+                    android:layout_alignTop="@+id/tvRecent3"
+                    android:layout_alignBottom="@+id/tvRecent3"
+                    android:layout_marginLeft="@dimen/halfFieldSpacing"
+                    android:layout_toEndOf="@+id/tvRecent3"
+                    app:srcCompat="@drawable/knop" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tvTotalScans"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rlWrapperRecent3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="22dp"
+
+                android:text="TOTAL SCANS: X"
+                android:textAlignment="center"
+                android:textColor="@color/bdRed"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/bScan"
                 android:layout_width="wrap_content"
@@ -83,53 +181,6 @@
                 android:text="Adjust Standard Comments?"
                 android:textColor="@color/bdRed"
                 android:textStyle="italic" />
-
-            <TextView
-                android:id="@+id/tvTotalScans"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvRecent3"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="22dp"
-
-                android:text="TOTAL SCANS: X"
-                android:textAlignment="center"
-                android:textColor="@color/bdRed"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvRecent1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvRecent"
-                android:layout_centerHorizontal="true"
-                android:text="Student 1"
-                android:layout_marginTop="10dp"
-                android:textAlignment="center"
-                android:textColor="@color/pureBlack" />
-
-            <TextView
-                android:id="@+id/tvRecent2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvRecent1"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/recentNameSpacing"
-                android:text="Student 2"
-                android:textAlignment="center"
-                android:textColor="@color/pureBlack" />
-
-            <TextView
-                android:id="@+id/tvRecent3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvRecent2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/recentNameSpacing"
-                android:text="Student 3"
-                android:textAlignment="center"
-                android:textColor="@color/pureBlack" />
 
             <ImageView
                 android:id="@+id/ivFooter"

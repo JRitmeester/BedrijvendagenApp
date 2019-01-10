@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nl.bedrijvendagen.bedrijvendagen;
+package com.google.android.gms.samples.vision.barcodereader.ui.camera;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -27,7 +26,6 @@ import android.view.SurfaceView;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.images.Size;
-import com.google.android.gms.vision.CameraSource;
 
 import java.io.IOException;
 
@@ -40,6 +38,8 @@ public class CameraSourcePreview extends ViewGroup {
     private boolean mSurfaceAvailable;
     private CameraSource mCameraSource;
 
+    private GraphicOverlay mOverlay;
+
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -51,7 +51,8 @@ public class CameraSourcePreview extends ViewGroup {
         addView(mSurfaceView);
     }
 
-    public void start(CameraSource cameraSource) throws IOException {
+    @RequiresPermission(Manifest.permission.CAMERA)
+    public void start(CameraSource cameraSource) throws IOException, SecurityException {
         if (cameraSource == null) {
             stop();
         }
@@ -64,6 +65,11 @@ public class CameraSourcePreview extends ViewGroup {
         }
     }
 
+    @RequiresPermission(Manifest.permission.CAMERA)
+    public void start(CameraSource cameraSource, GraphicOverlay overlay) throws IOException, SecurityException {
+        mOverlay = overlay;
+        start(cameraSource);
+    }
 
     public void stop() {
         if (mCameraSource != null) {
@@ -78,25 +84,23 @@ public class CameraSourcePreview extends ViewGroup {
         }
     }
 
-    private void startIfReady() throws IOException {
+    @RequiresPermission(Manifest.permission.CAMERA)
+    private void startIfReady() throws IOException, SecurityException {
         if (mStartRequested && mSurfaceAvailable) {
-            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
             mCameraSource.start(mSurfaceView.getHolder());
-
+            if (mOverlay != null) {
                 Size size = mCameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
                 int max = Math.max(size.getWidth(), size.getHeight());
-
-
+                if (isPortraitMode()) {
+                    // Swap width and height sizes when in portrait, since it will be rotated by
+                    // 90 degrees
+                    mOverlay.setCameraInfo(min, max, mCameraSource.getCameraFacing());
+                } else {
+                    mOverlay.setCameraInfo(max, min, mCameraSource.getCameraFacing());
+                }
+                mOverlay.clear();
+            }
             mStartRequested = false;
         }
     }
@@ -107,6 +111,8 @@ public class CameraSourcePreview extends ViewGroup {
             mSurfaceAvailable = true;
             try {
                 startIfReady();
+            } catch (SecurityException se) {
+                Log.e(TAG,"Do not have permission to start the camera", se);
             } catch (IOException e) {
                 Log.e(TAG, "Could not start camera source.", e);
             }
@@ -124,58 +130,50 @@ public class CameraSourcePreview extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        int previewWidth = 320;
-        int previewHeight = 240;
-        if (mCameraSource != null) {
+        int width = 320;
+        int height = 240;
+        if (mCameraSource != null)
+        {
             Size size = mCameraSource.getPreviewSize();
-            if (size != null) {
-                previewWidth = size.getWidth();
-                previewHeight = size.getHeight();
+            if (size != null)
+            {
+                width = size.getWidth();
+                height = size.getHeight();
             }
         }
 
         // Swap width and height sizes when in portrait, since it will be rotated 90 degrees
-        if (isPortraitMode()) {
-            int tmp = previewWidth;
-            previewWidth = previewHeight;
-            previewHeight = tmp;
+        if (isPortraitMode())
+        {
+            int tmp = width;
+
+            //noinspection SuspiciousNameCombination
+            width = height;
+            height = tmp;
         }
 
-        final int viewWidth = right - left;
-        final int viewHeight = bottom - top;
+        final int layoutWidth = right - left;
+        final int layoutHeight = bottom - top;
 
-        int childWidth;
-        int childHeight;
-        int childXOffset = 0;
-        int childYOffset = 0;
-        float widthRatio = (float) viewWidth / (float) previewWidth;
-        float heightRatio = (float) viewHeight / (float) previewHeight;
+        // Computes height and width for potentially doing fit width.
+        int childWidth = layoutWidth;
+        int childHeight = (int) (((float) layoutWidth / (float) width) * height);
 
-        // To fill the view with the camera preview, while also preserving the correct aspect ratio,
-        // it is usually necessary to slightly oversize the child and to crop off portions along one
-        // of the dimensions.  We scale up based on the dimension requiring the most correction, and
-        // compute a crop offset for the other dimension.
-        if (widthRatio > heightRatio) {
-            childWidth = viewWidth;
-            childHeight = (int) ((float) previewHeight * widthRatio);
-            childYOffset = (childHeight - viewHeight) / 2;
-        } else {
-            childWidth = (int) ((float) previewWidth * heightRatio);
-            childHeight = viewHeight;
-            childXOffset = (childWidth - viewWidth) / 2;
+        for (int i = 0; i < getChildCount(); ++i)
+        {
+            getChildAt(i).layout(0, 0, childWidth, layoutHeight);
         }
 
-        for (int i = 0; i < getChildCount(); ++i) {
-            // One dimension will be cropped.  We shift child over or up by this offset and adjust
-            // the size to maintain the proper aspect ratio.
-            getChildAt(i).layout(
-                    -1 * childXOffset, -1 * childYOffset,
-                    childWidth - childXOffset, childHeight - childYOffset);
-        }
-
-        try {
+        try
+        {
             startIfReady();
-        } catch (IOException e) {
+        }
+        catch (SecurityException se)
+        {
+            Log.e(TAG, "Do not have permission to start the camera", se);
+        }
+        catch (IOException e)
+        {
             Log.e(TAG, "Could not start camera source.", e);
         }
     }
